@@ -1,58 +1,76 @@
 package it.unibo.psm.ricettasi.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+@Immutable
+data class CustomColors(
+    val statusOk: Color,
+    val statusWarning: Color,
+    val statusCritical: Color
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+private val LightCustomColors = CustomColors(
+    statusOk = StatusOk,
+    statusWarning = StatusWarning,
+    statusCritical = StatusCritical
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkCustomColors = CustomColors(
+    statusOk = StatusOkDark,
+    statusWarning = StatusWarningDark,
+    statusCritical = StatusCriticalDark
+)
+
+private val LocalCustomColors = staticCompositionLocalOf { LightCustomColors }
+
+val MaterialTheme.customColors: CustomColors
+    @Composable get() = LocalCustomColors.current
+
+private val BaseLightColorScheme = lightColorScheme(
+    primary = Accent,
+    background = Background,
+    surface = Surface,
+    onBackground = TextPrimary,
+    onSurface = TextPrimary,
+    onSurfaceVariant = TextSecondary,
+    outline = TextSecondary,
+    error = StatusCritical
+)
+
+private val BaseDarkColorScheme = darkColorScheme(
+    primary = AccentDark,
+    background = BackgroundDark,
+    surface = SurfaceDark,
+    onBackground = TextPrimaryDark,
+    onSurface = TextPrimaryDark,
+    onSurfaceVariant = TextSecondaryDark,
+    outline = TextSecondaryDark,
+    error = StatusCriticalDark
 )
 
 @Composable
 fun RicettaSiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val customColors = if (darkTheme) DarkCustomColors else LightCustomColors
+    val colorScheme = if (darkTheme) BaseDarkColorScheme else BaseLightColorScheme
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    CompositionLocalProvider(
+        LocalCustomColors provides customColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
 }
