@@ -31,6 +31,8 @@ private val DarkCustomColors = CustomColors(
 
 private val LocalCustomColors = staticCompositionLocalOf { LightCustomColors }
 
+// Extension property to access custom colors from MaterialTheme
+@Suppress("UnusedReceiverParameter")
 val MaterialTheme.customColors: CustomColors
     @Composable get() = LocalCustomColors.current
 
