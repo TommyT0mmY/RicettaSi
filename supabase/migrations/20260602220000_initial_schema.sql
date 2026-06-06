@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS public.recipes (
     image_url           TEXT,
     preparation_time    INTEGER,
     difficulty          TEXT NOT NULL DEFAULT 'facile' CHECK (difficulty IN ('facile','medio','difficile')),
-    steps               JSONB NOT NULL DEFAULT '[]'::jsonb,   -- ordered list of preparation steps
+    steps               JSONB NOT NULL DEFAULT '[]'::jsonb,   -- ordered array of instruction strings
+    servings            TEXT,                                  -- free-text yield: "4 persone", "20-25 biscotti", "8 fette", ...
     created_by_user_id  UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -78,8 +79,8 @@ INSERT INTO public.categories (name) VALUES
     ('Italiana'), ('Messicana'), ('Giapponese'), ('Cinese'), ('Indiana'), ('Thailandese'),
     ('Spagnola'), ('Greca'), ('Francese'), ('Americana'), ('Araba'), ('Fusion'), ('Regionale'),
     ('Mediterranea'), ('Vegetariana'), ('Vegana'), ('Senza Glutine'), ('Senza Lattosio'),
-    ('Light'), ('Chetogenica'), ('Proteica'), ('Salutista'), ('Low Carb'),
-    ('Dolce'), ('Comfort'), ('Pescatariana'), ('Frutta'), ('Economica'), ('Gourmet'),
+    ('Light'), ('Chetogenica'), ('Proteica'), ('Salutista'), ('Low Carb'), ('Pescatariana'), ('Frutta'),
+    ('Dolce'), ('Comfort'), ('Economica'), ('Gourmet'),
     ('Grandi Occasioni'), ('Estiva'), ('Invernale'), ('Autunnale'), ('Primaverile'),
     ('Piccante'), ('Finger Food'), ('Al Cucchiaio')
 ON CONFLICT (name) DO NOTHING;
@@ -461,11 +462,9 @@ CREATE OR REPLACE FUNCTION public.search_recipes(
 RETURNS TABLE (
     id                   UUID,
     title                TEXT,
-    description          TEXT,
     image_url            TEXT,
     preparation_time     INT,
     difficulty           TEXT,
-    created_by_user_id   UUID,
     -- Match %: available_count / required_count * 100.
     -- Used to rank "Suggeriti per te" (home) and Esplora results: higher = more pantry coverage.
     available_count      INT,    -- how many of the recipe's ingredients are in the pantry
@@ -479,8 +478,7 @@ LANGUAGE sql STABLE SECURITY INVOKER SET search_path = public, pg_temp AS $$
     -- matched: one row per recipe that passes the filters, with pantry match counts.
     WITH matched AS (
         SELECT
-            r.id, r.title, r.description, r.image_url,
-            r.preparation_time, r.difficulty, r.created_by_user_id,
+            r.id, r.title, r.image_url, r.preparation_time, r.difficulty,
             (SELECT count(*)::int FROM public.recipe_ingredients
               WHERE recipe_id = r.id AND ingredient_id = ANY(p_pantry_roots))        AS available_count,
             (SELECT count(*)::int FROM public.recipe_ingredients
@@ -515,7 +513,7 @@ LANGUAGE sql STABLE SECURITY INVOKER SET search_path = public, pg_temp AS $$
                     WHERE recipe_id = r.id AND ingredient_id = ANY(p_ingredient_roots)
                 ) = array_length(p_ingredient_roots, 1))
     )
-    SELECT id, title, description, image_url, preparation_time, difficulty, created_by_user_id,
+    SELECT id, title, image_url, preparation_time, difficulty,
            available_count, required_count, expiring_match_count, categories, meal_types
     FROM matched
     WHERE available_count >= p_min_available
