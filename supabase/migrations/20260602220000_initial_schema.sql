@@ -79,7 +79,7 @@ INSERT INTO public.categories (name) VALUES
     ('Spagnola'), ('Greca'), ('Francese'), ('Americana'), ('Araba'), ('Fusion'), ('Regionale'),
     ('Mediterranea'), ('Vegetariana'), ('Vegana'), ('Senza Glutine'), ('Senza Lattosio'),
     ('Light'), ('Chetogenica'), ('Proteica'), ('Salutista'), ('Low Carb'),
-    ('Dolce'), ('Comfort'), ('Veloce'), ('Svuotafrigo'), ('Economica'), ('Gourmet'),
+    ('Dolce'), ('Comfort'), ('Pescatariana'), ('Frutta'), ('Economica'), ('Gourmet'),
     ('Grandi Occasioni'), ('Estiva'), ('Invernale'), ('Autunnale'), ('Primaverile'),
     ('Piccante'), ('Finger Food'), ('Al Cucchiaio')
 ON CONFLICT (name) DO NOTHING;
@@ -201,8 +201,8 @@ DECLARE
     v_created_by_user  BOOLEAN;
     v_user_id          UUID;
 BEGIN
-    v_created_by_user := COALESCE(NEW, OLD).created_by_user;
-    v_user_id         := COALESCE(NEW, OLD).user_id;
+    v_created_by_user := COALESCE(NEW.created_by_user, OLD.created_by_user);
+    v_user_id         := COALESCE(NEW.user_id, OLD.user_id);
     IF v_created_by_user THEN
         UPDATE public.user_profiles
            SET ingredients_version = ingredients_version + 1
