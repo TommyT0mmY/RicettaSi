@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS public.recipes (
     description         TEXT,
     image_url           TEXT,
     preparation_time    INTEGER,
-    difficulty          TEXT NOT NULL DEFAULT 'Facile' CHECK (difficulty IN ('Facile','Medio','Difficile')),
+    difficulty          TEXT NOT NULL DEFAULT 'facile' CHECK (difficulty IN ('facile','medio','difficile')),
     steps               JSONB NOT NULL DEFAULT '[]'::jsonb,   -- ordered list of preparation steps
     created_by_user_id  UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -58,7 +58,7 @@ CREATE INDEX IF NOT EXISTS idx_recipes_title_trgm ON public.recipes USING gin (t
 -- M2M recipe <-> meal type
 CREATE TABLE IF NOT EXISTS public.recipe_meal_types (
     recipe_id  UUID NOT NULL REFERENCES public.recipes(id) ON DELETE CASCADE,
-    meal_type  TEXT NOT NULL CHECK (meal_type IN ('Colazione','Pranzo','Cena','Brunch','Merenda','Aperitivo')),
+    meal_type  TEXT NOT NULL CHECK (meal_type IN ('colazione','pranzo','cena','brunch','merenda','aperitivo')),
     PRIMARY KEY (recipe_id, meal_type)
 );
 CREATE INDEX IF NOT EXISTS idx_recipe_meal_types_meal_type_recipe ON public.recipe_meal_types (meal_type, recipe_id);

@@ -23,7 +23,7 @@ INSERT INTO public.badges (code, name, description, criteria) VALUES
     ('salva-cibo',         'Salva-cibo',               'Cucina 5 ricette salvando ingredienti in scadenza',        '{"type":"rescued_expiring","value":5}'),
     ('gufo-fornelli',      'Gufo dei fornelli',        'Cucina 3 ricette in piena notte (tra le 23:00 e le 05:00)','{"type":"cooked_night","value":3}'),
     ('cucina-lampo',       'Cucina lampo',             'Cucina 10 ricette con preparazione in 15 minuti o meno',   '{"type":"cooked_quick","value":10,"max_minutes":15}'),
-    ('colazione-campioni', 'Colazione dei campioni',   'Cucina 5 ricette da colazione',                            '{"type":"meal_type_cooked","value":5,"meal":"Colazione"}');
+    ('colazione-campioni', 'Colazione dei campioni',   'Cucina 5 ricette da colazione',                            '{"type":"meal_type_cooked","value":5,"meal":"colazione"}');
 
 -- ------------------------------------------------------------
 -- Awards the user the badges they have earned.
