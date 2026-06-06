@@ -4,48 +4,64 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Ricetta con tutte le relazioni (opzionali, presenti solo quando la select
- * di PostgREST include l'embedding). Usato sia per liste (search, suggerimenti)
- * che per il dettaglio.
+ * Full recipe with all its relations embedded (PostgREST select with joins).
+ * Every M2M relation picks columns directly from the junction table, never
+ * nesting through foreign keys, so the DTO shapes stay flat and consistent.
  */
 @Serializable
 data class RecipeDto(
     val id: String,
     val title: String,
     val description: String? = null,
-    @SerialName("image_url") val imageUrl: String? = null,
-    @SerialName("preparation_time") val preparationTime: Int? = null,
+    @SerialName(COL_IMAGE_URL) val imageUrl: String? = null,
+    @SerialName(COL_PREPARATION_TIME) val preparationTime: Int? = null,
     val difficulty: String = "facile",
-    /** Colonna JSONB. */
-    val steps: List<RecipeStepDto> = emptyList(),
-    @SerialName("created_by_user_id") val createdByUserId: String? = null,
-    @SerialName("recipe_ingredients") val ingredients: List<RecipeIngredientDto> = emptyList(),
-    @SerialName("recipe_meal_types") val mealTypes: List<RecipeMealTypeDto> = emptyList(),
-    @SerialName("recipe_categories") val categories: List<RecipeCategoryDto> = emptyList(),
-)
+    val servings: String? = null,
+    val steps: List<String> = emptyList(), // JSONB with ordered instruction strings
+    @SerialName(COL_CREATED_BY_USER_ID) val createdByUserId: String? = null,
+    @SerialName(RecipeIngredientDto.TABLE) val ingredients: List<RecipeIngredientDto> = emptyList(),
+    @SerialName(RecipeMealTypeDto.TABLE) val mealTypes: List<RecipeMealTypeDto> = emptyList(),
+    @SerialName(RecipeCategoryDto.TABLE) val categories: List<RecipeCategoryDto> = emptyList(),
+) {
+    companion object {
+        const val COL_ID = "id"
+        const val COL_IMAGE_URL = "image_url"
+        const val COL_PREPARATION_TIME = "preparation_time"
+        const val COL_CREATED_BY_USER_ID = "created_by_user_id"
+    }
+}
 
-@Serializable
-data class RecipeStepDto(
-    @SerialName("step_number") val stepNumber: Int,
-    val instruction: String,
-)
-
+/** Ties a recipe to an ingredient it needs, with an optional free-text quantity. */
 @Serializable
 data class RecipeIngredientDto(
-    @SerialName("recipe_id") val recipeId: String,
-    @SerialName("ingredient_id") val ingredientId: String,
+    @SerialName(COL_INGREDIENT_ID) val ingredientId: String,
     val quantity: String? = null,
-    val optional: Boolean = false,
-)
+) {
+    companion object {
+        const val TABLE = "recipe_ingredients"
+        const val COL_INGREDIENT_ID = "ingredient_id"
+        const val COL_QUANTITY = "quantity"
+    }
+}
 
+/** Ties a recipe to a meal type. */
 @Serializable
 data class RecipeMealTypeDto(
-    @SerialName("recipe_id") val recipeId: String,
-    @SerialName("meal_type") val mealType: String,
-)
+    @SerialName(COL_MEAL_TYPE) val mealType: String,
+) {
+    companion object {
+        const val TABLE = "recipe_meal_types"
+        const val COL_MEAL_TYPE = "meal_type"
+    }
+}
 
+/** Ties a recipe to a category by referencing the category id directly. */
 @Serializable
 data class RecipeCategoryDto(
-    @SerialName("recipe_id") val recipeId: String,
-    val category: String,
-)
+    @SerialName(COL_CATEGORY_ID) val categoryId: String,
+) {
+    companion object {
+        const val TABLE = "recipe_categories"
+        const val COL_CATEGORY_ID = "category_id"
+    }
+}

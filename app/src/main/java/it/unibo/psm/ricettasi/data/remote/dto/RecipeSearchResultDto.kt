@@ -4,22 +4,30 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Risultato della RPC `search_recipes`.
- * Contiene i campi base della ricetta + i conteggi di disponibilità + tags.
- * Non include `steps` (JSONB) perché non servono nelle viste a lista.
+ * A recipe in compact form, exactly what the `search_recipes` RPC returns for a list row.
+ * No description, no servings, no author, just enough to draw a card, plus the availability
+ * counts worked out against the user's pantry (how many of its ingredients are available, how
+ * many are required and how many are about to expire) and its tags.
  */
 @Serializable
 data class RecipeSearchResultDto(
     val id: String,
     val title: String,
-    val description: String? = null,
-    @SerialName("image_url") val imageUrl: String? = null,
-    @SerialName("preparation_time") val preparationTime: Int? = null,
+    @SerialName(COL_IMAGE_URL) val imageUrl: String? = null,
+    @SerialName(COL_PREPARATION_TIME) val preparationTime: Int? = null,
     val difficulty: String = "facile",
-    @SerialName("created_by_user_id") val createdByUserId: String? = null,
-    @SerialName("available_count") val availableCount: Int = 0,
-    @SerialName("required_count") val requiredCount: Int = 0,
-    @SerialName("expiring_match_count") val expiringMatchCount: Int = 0,
+    @SerialName(COL_AVAILABLE_COUNT) val availableCount: Int = 0,
+    @SerialName(COL_REQUIRED_COUNT) val requiredCount: Int = 0,
+    @SerialName(COL_EXPIRING_MATCH_COUNT) val expiringMatchCount: Int = 0,
     val categories: List<String> = emptyList(),
-    @SerialName("meal_types") val mealTypes: List<String> = emptyList(),
-)
+    @SerialName(COL_MEAL_TYPES) val mealTypes: List<String> = emptyList(),
+) {
+    companion object {
+        const val COL_IMAGE_URL = "image_url"
+        const val COL_PREPARATION_TIME = "preparation_time"
+        const val COL_AVAILABLE_COUNT = "available_count"
+        const val COL_REQUIRED_COUNT = "required_count"
+        const val COL_EXPIRING_MATCH_COUNT = "expiring_match_count"
+        const val COL_MEAL_TYPES = "meal_types"
+    }
+}

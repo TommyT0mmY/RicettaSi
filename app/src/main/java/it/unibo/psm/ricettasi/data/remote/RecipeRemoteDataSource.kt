@@ -4,59 +4,72 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import it.unibo.psm.ricettasi.data.remote.dto.RecipeCategoryDto
 import it.unibo.psm.ricettasi.data.remote.dto.RecipeDto
+import it.unibo.psm.ricettasi.data.remote.dto.RecipeIngredientDto
+import it.unibo.psm.ricettasi.data.remote.dto.RecipeMealTypeDto
 import it.unibo.psm.ricettasi.data.remote.dto.RecipeSearchResultDto
-import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 
 /**
- * Supabase access for catalogue recipes.
+ * SupabaseClient wrapper to talk to the recipe-related tables on the server.
  *
- * Tutte le liste (esplora, suggerimenti, svuota-frigo) passano dall'unico metodo
- * [searchRecipes] che chiama la RPC `search_recipes`. Il dettaglio ricetta usa
- * [getById] che restituisce la ricetta completa con steps e relazioni.
+ * Every list (esplora, suggerimenti, svuota-frigo) goes through the single
+ * [searchRecipes] method, which calls the `search_recipes` RPC. The recipe
+ * detail screen uses [getById], which returns the full recipe with steps and relations.
  */
 class RecipeRemoteDataSource(
     private val client: SupabaseClient,
 ) {
-
-    /** Select su `recipes` con tutte le relazioni embedded. */
+    /**
+     * Select on `recipes` with the M2M relations embedded. Each relation only picks
+     * columns from the junction table itself, never through the FK, so the queries
+     * stay consistent and the DTOs flat.
+     */
     private val fullColumns = Columns.raw(
         "*," +
-            "recipe_ingredients(recipe_id,ingredient_id,quantity,optional)," +
-            "recipe_meal_types(recipe_id,meal_type)," +
-            "recipe_categories(recipe_id,category)",
+            "${RecipeIngredientDto.TABLE}(${RecipeIngredientDto.COL_INGREDIENT_ID},${RecipeIngredientDto.COL_QUANTITY})," +
+            "${RecipeMealTypeDto.TABLE}(${RecipeMealTypeDto.COL_MEAL_TYPE})," +
+            "${RecipeCategoryDto.TABLE}(${RecipeCategoryDto.COL_CATEGORY_ID})",
     )
 
     /**
-     * Unico metodo di ricerca: chiama la RPC `search_recipes` che filtra
-     * server-side per titolo, difficoltà, tempo max, tipo pasto, categoria,
-     * ingredienti richiesti e calcola disponibilità contro la dispensa.
+     * The only search method: calls the `search_recipes` RPC, which filters
+     * server-side by title, difficulty, time windows, meal type, categories and
+     * required ingredients, works out availability against the pantry, and
+     * orders the results ('title' | 'match' | 'expiring').
      */
     suspend fun searchRecipes(
         query: String? = null,
-        difficulty: String? = null,
-        maxMinutes: Int? = null,
+        difficulties: List<String> = emptyList(),
+        timeWindows: List<String> = emptyList(),
         mealType: String? = null,
-        category: String? = null,
+        categories: List<String> = emptyList(),
         ingredientRoots: List<String> = emptyList(),
         pantryRoots: List<String> = emptyList(),
         expiringRoots: List<String> = emptyList(),
         minAvailable: Int = 0,
         minExpiring: Int = 0,
+        orderBy: String = "title",
         limit: Int = 60,
     ): List<RecipeSearchResultDto> =
         client.postgrest.rpc(
             function = "search_recipes",
             parameters = buildJsonObject {
                 put("p_query", query?.let { JsonPrimitive(it) } ?: JsonNull)
-                put("p_difficulty", difficulty?.let { JsonPrimitive(it) } ?: JsonNull)
-                put("p_max_minutes", maxMinutes?.let { JsonPrimitive(it) } ?: JsonNull)
+                putJsonArray("p_difficulties") {
+                    difficulties.forEach { add(JsonPrimitive(it)) }
+                }
+                putJsonArray("p_time_windows") {
+                    timeWindows.forEach { add(JsonPrimitive(it)) }
+                }
                 put("p_meal_type", mealType?.let { JsonPrimitive(it) } ?: JsonNull)
-                put("p_category", category?.let { JsonPrimitive(it) } ?: JsonNull)
+                putJsonArray("p_categories") {
+                    categories.forEach { add(JsonPrimitive(it)) }
+                }
                 putJsonArray("p_ingredient_roots") {
                     ingredientRoots.forEach { add(JsonPrimitive(it)) }
                 }
@@ -68,12 +81,16 @@ class RecipeRemoteDataSource(
                 }
                 put("p_min_available", JsonPrimitive(minAvailable))
                 put("p_min_expiring", JsonPrimitive(minExpiring))
-                put("p_limit", JsonPrimitive(limit))            },
+                put("p_order_by", JsonPrimitive(orderBy))
+                put("p_limit", JsonPrimitive(limit))
+            },
         ).decodeList()
 
-    /** Ricetta completa (con steps e relazioni), per la schermata dettaglio. */
+    /**
+     * @return The full recipe (with steps and relations) for the detail screen.
+     */
     suspend fun getById(id: String): RecipeDto? =
         client.from("recipes").select(fullColumns) {
-            filter { eq("id", id) }
+            filter { eq(RecipeDto.COL_ID, id) }
         }.decodeSingleOrNull()
 }
