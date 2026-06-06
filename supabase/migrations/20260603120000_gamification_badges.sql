@@ -64,7 +64,7 @@ BEGIN
             FROM public.cooked_recipes
             WHERE user_id = uid;
         ELSIF type = 'categories_cooked' THEN
-            SELECT count(DISTINCT rc.category) INTO v_count
+            SELECT count(DISTINCT rc.category_id) INTO v_count
             FROM public.cooked_recipes cr
             JOIN public.recipe_categories rc ON rc.recipe_id = cr.recipe_id
             WHERE cr.user_id = uid;

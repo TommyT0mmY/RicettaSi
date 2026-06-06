@@ -303,14 +303,37 @@ CREATE TRIGGER ingredient_check_reparent
     BEFORE UPDATE ON public.ingredients
     FOR EACH ROW EXECUTE FUNCTION public.check_ingredient_reparent();
 
--- Awards 25 XP after cooking a recipe
+-- Total xp needed to reach a given level. Each level requires more xp than the previous one.
+CREATE OR REPLACE FUNCTION public.xp_for_level(p_level INTEGER)
+RETURNS INTEGER
+LANGUAGE sql IMMUTABLE AS $$
+    SELECT 100 * (p_level - 1) * (p_level - 1);
+$$;
+-- Inverse of xp_for_level: which level a given amount of total xp falls into.
+CREATE OR REPLACE FUNCTION public.level_for_xp(p_xp INTEGER)
+RETURNS INTEGER
+LANGUAGE sql IMMUTABLE AS $$
+    SELECT floor(sqrt(p_xp::numeric / 100))::INTEGER + 1;
+$$;
+
+-- Awards xp after cooking a recipe.
+-- The amount of given xp depends on the difficulty of the recipe.
 CREATE OR REPLACE FUNCTION public.award_cooking_xp()
 RETURNS TRIGGER
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $$
+DECLARE
+    v_difficulty  TEXT;
+    v_reward      INTEGER;
 BEGIN
+    SELECT difficulty INTO v_difficulty FROM public.recipes WHERE id = NEW.recipe_id;
+    v_reward := CASE v_difficulty
+        WHEN 'difficile' THEN 30
+        WHEN 'medio'     THEN 20
+        ELSE 10
+    END;
     UPDATE public.user_profiles
-       SET xp    = xp + 25,
-           level = floor((xp + 25) / 200.0) + 1
+       SET xp    = xp + v_reward,
+           level = public.level_for_xp(xp + v_reward)
      WHERE user_id = NEW.user_id;
     RETURN NEW;
 END;
