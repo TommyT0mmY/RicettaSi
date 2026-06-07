@@ -37,10 +37,33 @@ class RecipeRemoteDataSource(
     )
 
     /**
-     * The only search method: calls the `search_recipes` RPC, which filters
-     * server-side by title, difficulty, time windows, meal type, categories and
-     * required ingredients, works out availability against the pantry, and
-     * orders the results ('title' | 'match' | 'expiring').
+     * The only search method: calls the `search_recipes` RPC, which does all the
+     * filtering, pantry matching and ordering server-side. Every parameter is optional:
+     * leaving it null (or an empty list) just skips that filter. The filters are combined
+     * with AND between each other, but inside a single list parameter it depends on which
+     * one it is:
+     *
+     * - [query]: case insensitive substring match on the title, or a typo-tolerant match.
+     * - [difficulties]: OR match, the recipe must have one of these difficulty values.
+     * - [timeWindows]: OR match on the preparation time, bucketed into 'quick' (<= 15 min),
+     *   'medium' (16 to 30 min) or 'long' (more than 30 min).
+     * - [mealType]: single value, the recipe must be linked to this meal type.
+     * - [categories]: AND match, the recipe must have ALL the given category names, not
+     *   just one of them.
+     * - [ingredientRoots]: AND match, the recipe must contain ALL of these ingredient ids.
+     *   They must already be root ingredient ids, there is no synonym resolution inside
+     *   the RPC.
+     * - [pantryRoots]: not a filter on its own. It is compared against the recipe's own
+     *   ingredients to work out how many of them are in the pantry, the availableCount/
+     *   requiredCount pair on [RecipeSearchResultDto] (the pantry match percentage).
+     * - [expiringRoots]: same idea but for ingredients close to expiry, used to fill
+     *   expiringMatchCount.
+     * - [minAvailable]/[minExpiring]: drop recipes whose match counts (computed from
+     *   pantryRoots/expiringRoots above) fall below these thresholds.
+     * - [orderBy]: 'title' (alphabetical, the default), 'match' (highest pantry match
+     *   percentage first) or 'expiring' (most expiring ingredients used first). Recipes
+     *   tied on the chosen order, or any other value, fall back to title order.
+     * - [limit]: max number of rows returned.
      */
     suspend fun searchRecipes(
         query: String? = null,

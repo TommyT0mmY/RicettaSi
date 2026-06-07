@@ -13,8 +13,7 @@ INSERT INTO public.ingredients (id, name, parent_ingredient_id) VALUES
     ('a0000000-0000-0000-0000-000000000006', 'pomodorino', 'a0000000-0000-0000-0000-000000000001');
 
 -- Recipes covering all 3 difficulty values, all 3 time windows (quick/medium/long),
--- a recipe with null description/servings, and one with no ingredients/meal types/
--- categories at all.
+-- a recipe with null description/servings, and one with no ingredients/meal types/categories.
 INSERT INTO public.recipes (id, title, description, preparation_time, difficulty, steps, servings) VALUES
     ('b0000000-0000-0000-0000-000000000001', 'Pasta al pomodoro',
      'Un primo piatto classico della cucina italiana.', 20, 'facile',
@@ -33,7 +32,11 @@ INSERT INTO public.recipes (id, title, description, preparation_time, difficulty
      '["Sciogli il cioccolato a bagnomaria", "Monta le uova con lo zucchero", "Unisci la farina setacciata", "Versa in una tortiera imburrata", "Cuoci in forno e lascia raffreddare"]',
      '8 fette'),
     ('b0000000-0000-0000-0000-000000000005', 'Empty recipe',
-     NULL, 1, 'facile', '[]', NULL); -- No steps, No description, No servings
+     NULL, 1, 'facile', '[]', NULL), -- No steps, No description, No servings
+    ('b0000000-0000-0000-0000-000000000006', 'Carbonara cream',
+     NULL, 25, 'medio', '[]', NULL), -- only "carbonara" overlaps with a "pasta carbonara" search
+    ('b0000000-0000-0000-0000-000000000007', 'Pasta alla carbonara',
+     NULL, 25, 'medio', '[]', NULL); -- closer match than the above, must rank above it
 
 INSERT INTO public.recipe_ingredients (recipe_id, ingredient_id, quantity) VALUES
     ('b0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', '400g'), -- pomodoro in Pasta al pomodoro
@@ -42,7 +45,6 @@ INSERT INTO public.recipe_ingredients (recipe_id, ingredient_id, quantity) VALUE
     ('b0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000004', '200g'), -- farina in Pancake veloci
     ('b0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000004', '250g'), -- farina in Torta al cioccolato
     ('b0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000005', '150g'); -- cioccolato in Torta al cioccolato
--- b0000000-...-005 ("Acqua e basta") deliberately has no ingredients.
 
 INSERT INTO public.recipe_meal_types (recipe_id, meal_type) VALUES
     ('b0000000-0000-0000-0000-000000000001', 'pranzo'),     -- Pasta al pomodoro
@@ -51,7 +53,6 @@ INSERT INTO public.recipe_meal_types (recipe_id, meal_type) VALUES
     ('b0000000-0000-0000-0000-000000000003', 'colazione'),  -- Pancake veloci
     ('b0000000-0000-0000-0000-000000000003', 'brunch'),     -- Pancake veloci
     ('b0000000-0000-0000-0000-000000000004', 'merenda');    -- Torta al cioccolato
--- b0000000-...-005 has no meal types.
 
 DELETE FROM public.categories;
 INSERT INTO public.categories (id, name) VALUES

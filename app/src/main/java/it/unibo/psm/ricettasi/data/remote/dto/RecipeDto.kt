@@ -47,7 +47,7 @@ data class RecipeIngredientDto(
 /** Ties a recipe to a meal type. */
 @Serializable
 data class RecipeMealTypeDto(
-    @SerialName(COL_MEAL_TYPE) val mealType: String,
+    @SerialName(COL_MEAL_TYPE) val mealType: String, // Enum value directly, no id (e.g. 'pranzo')
 ) {
     companion object {
         const val TABLE = "recipe_meal_types"
