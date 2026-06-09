@@ -433,6 +433,7 @@ CREATE POLICY "user_badges_own" ON public.user_badges
 --                        'long'   -> > 30 min
 --   p_meal_type        keep only recipes tagged with this meal type; single value, null = any
 --   p_categories       keep only recipes that have ALL of these categories (AND match; empty = any)
+--                      this is the category NAME (categories.name), not the categories.id UUID
 --                      example: ['italiana', 'vegana'] returns only italian-vegan recipes
 --   p_ingredient_roots root IDs the recipe must contain ALL of (ingredient filter from Esplora)
 --   p_pantry_roots     root IDs the user currently has in the pantry; used to compute available_count

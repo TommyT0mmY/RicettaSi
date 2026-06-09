@@ -1,15 +1,13 @@
 -- search_recipes only matched the title with ILIKE, so a query with a typo
--- found nothing. The <% operator from pg_trgm checks word_similarity(p_query, title),
--- which looks for the best matching word inside the title instead of comparing the whole
--- string.
--- The default word_similarity_threshold was too strict to catch a
--- transposed letter or two, so it is lowered just for this function.
+-- found nothing. word_similarity(p_query, title) from pg_trgm checks how well
+-- the query matches any word inside the title instead of comparing the whole string.
+-- The threshold 0.45 is lower than the default so a transposed letter or two still matches.
 CREATE OR REPLACE FUNCTION public.search_recipes(
     p_query            TEXT    DEFAULT NULL,
     p_difficulties     TEXT[]  DEFAULT ARRAY[]::text[],
     p_time_windows     TEXT[]  DEFAULT ARRAY[]::text[],
     p_meal_type        TEXT    DEFAULT NULL,
-    p_categories       TEXT[]  DEFAULT ARRAY[]::text[],
+    p_categories       TEXT[]  DEFAULT ARRAY[]::text[],  -- category names (categories.name), not the category UUID
     p_ingredient_roots UUID[]  DEFAULT ARRAY[]::uuid[],
     p_pantry_roots     UUID[]  DEFAULT ARRAY[]::uuid[],
     p_expiring_roots   UUID[]  DEFAULT ARRAY[]::uuid[],
@@ -32,7 +30,7 @@ RETURNS TABLE (
 )
 LANGUAGE sql STABLE SECURITY INVOKER
 SET search_path = public, pg_temp
-SET pg_trgm.word_similarity_threshold = 0.45 AS $$
+AS $$
     WITH matched AS (
         SELECT
             r.id, r.title, r.image_url, r.preparation_time, r.difficulty,
@@ -50,7 +48,7 @@ SET pg_trgm.word_similarity_threshold = 0.45 AS $$
                        WHERE recipe_id = r.id), ARRAY[]::text[])                     AS meal_types
         FROM public.recipes r
         WHERE
-            (p_query IS NULL OR r.title ILIKE '%' || p_query || '%' OR p_query <% r.title)
+            (p_query IS NULL OR r.title ILIKE '%' || p_query || '%' OR word_similarity(p_query, r.title) > 0.45)
             AND (array_length(p_difficulties, 1) IS NULL OR r.difficulty = ANY(p_difficulties))
             AND (array_length(p_time_windows, 1) IS NULL
                   OR ('quick'  = ANY(p_time_windows) AND r.preparation_time <= 15)
@@ -78,8 +76,8 @@ SET pg_trgm.word_similarity_threshold = 0.45 AS $$
     ORDER BY
         CASE WHEN p_order_by = 'match'    THEN available_count::float / NULLIF(required_count, 0) END DESC NULLS LAST,
         CASE WHEN p_order_by = 'expiring' THEN expiring_match_count::float                        END DESC NULLS LAST,
-        -- <% only tells us a title is a good enough match, it does not say how good.
-        -- Without this, two matches would fall back straight to alphabetical order,
+        -- word_similarity only tells us a title is a good enough match, it does not say how good.
+        -- Without this, two fuzzy matches would fall back straight to alphabetical order,
         -- which has nothing to do with how well they match the query.
         CASE WHEN p_query IS NOT NULL THEN
             GREATEST(
