@@ -2,7 +2,7 @@ package it.unibo.psm.ricettasi.data.sync
 
 import android.content.Context
 
-/** Version counters from the last successful synchronisation. */
+/** Version counters from the last successful synchronization. */
 data class SyncVersions(
     val global: Long = 0,
     val personal: Long = 0,
@@ -28,11 +28,6 @@ class SyncVersionStore(context: Context) {
     fun setPersonal(value: Long) = prefs.edit().putLong("personal_version", value).apply()
     fun setData(value: Long) = prefs.edit().putLong("data_version", value).apply()
 
-    /** Epoch millis of the last successful sync, or `null`. Used by the on-foreground trigger. */
-    fun lastSyncAt(): Long? = if (prefs.contains("last_sync_at")) prefs.getLong("last_sync_at", 0) else null
-
-    fun markSynced(now: Long = System.currentTimeMillis()) = prefs.edit().putLong("last_sync_at", now).apply()
-
-    /** Resets counters (e.g. on logout) so the next sync downloads everything from scratch. */
+    /** Resets counters so the next sync downloads everything from scratch. */
     fun clear() = prefs.edit().clear().apply()
 }
