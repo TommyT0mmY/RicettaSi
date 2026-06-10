@@ -7,6 +7,6 @@ val appModules: List<Module> = listOf(
     networkModule,
     databaseModule,
     syncModule,
-    // repositoryModule,
-    // viewModelModule,
+    repositoryModule,
+    viewModelModule,
 )
