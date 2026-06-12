@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 /** Navigation route constants. The first 5 are tabs; the rest are push destinations. */
 object Routes {
     const val HOME = "home"
-    const val DISPENSA = "dispensa"
+    const val PANTRY = "pantry"
     const val ESPLORA = "esplora"
     const val PREFERITI = "preferiti"
     const val PROFILO = "profilo"
@@ -30,7 +30,7 @@ data class BottomNavItem(
 
 val bottomNavItems = listOf(
     BottomNavItem(Routes.HOME, "Home", Icons.Outlined.Home),
-    BottomNavItem(Routes.DISPENSA, "Dispensa", Icons.Outlined.Kitchen),
+    BottomNavItem(Routes.PANTRY, "Dispensa", Icons.Outlined.Kitchen),
     BottomNavItem(Routes.ESPLORA, "Esplora", Icons.Outlined.Explore),
     BottomNavItem(Routes.PREFERITI, "Preferiti", Icons.Outlined.FavoriteBorder),
     BottomNavItem(Routes.PROFILO, "Profilo", Icons.Outlined.Person),

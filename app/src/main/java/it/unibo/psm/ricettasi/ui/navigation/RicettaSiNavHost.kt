@@ -19,7 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import it.unibo.psm.ricettasi.ui.screens.pantry.PantryScreen
+import it.unibo.psm.ricettasi.ui.screens.pantry.PantryRoute
 
 /**
  * Root of the authenticated app: bottom bar with 5 tabs (Home, Dispensa, Esplora,
@@ -66,12 +66,13 @@ fun RicettaSiNavHost() {
             startDestination = Routes.HOME,
             modifier = Modifier.padding(innerPadding),
         ) {
+            composable(Routes.PANTRY) { PantryRoute() }
+
             // -- Tab: placeholder (for screens not yet implemented) --
             composable(Routes.HOME) { TabPlaceholder("Home") }
             composable(Routes.ESPLORA) { TabPlaceholder("Esplora") }
             composable(Routes.PREFERITI) { TabPlaceholder("Preferiti") }
             composable(Routes.PROFILO) { TabPlaceholder("Profilo") }
-            composable(Routes.DISPENSA) { TabPlaceholder("Dispensa") }
         }
     }
 }
