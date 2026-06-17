@@ -3,6 +3,8 @@ package it.unibo.psm.ricettasi.data.local.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import it.unibo.psm.ricettasi.domain.model.Difficulty
+import it.unibo.psm.ricettasi.domain.model.MealType
 
 /**
  * Recipe in the local cache (favourites). Recipes are never downloaded all at once:
@@ -16,8 +18,7 @@ data class RecipeEntity(
     val imageUrl: String?,
     /** Minutes. */
     val preparationTime: Int?,
-    /** Persisted form of [it.unibo.psm.ricettasi.domain.model.Difficulty]. */
-    val difficulty: String,
+    val difficulty: Difficulty,
     /** JSON: ordered array of instruction strings. */
     val steps: String,
     /** Free-text yield: "4 persone", "20-25 biscotti", "8 fette", ecc. */
@@ -44,7 +45,7 @@ data class RecipeIngredientEntity(
 )
 data class RecipeMealTypeEntity(
     val recipeId: String,
-    val mealType: String,
+    val mealType: MealType,
 )
 
 @Entity(

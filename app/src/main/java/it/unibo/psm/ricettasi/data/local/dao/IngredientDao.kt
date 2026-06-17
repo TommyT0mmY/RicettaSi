@@ -4,42 +4,39 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import it.unibo.psm.ricettasi.data.local.entity.IngredientCacheEntity
-import kotlinx.coroutines.flow.Flow
+import it.unibo.psm.ricettasi.data.local.entity.IngredientEntity
 
 @Dao
 interface IngredientDao {
 
-    @Query("SELECT * FROM ingredient_cache")
-    suspend fun getAll(): List<IngredientCacheEntity>
+    @Query("SELECT * FROM ingredients")
+    suspend fun getAll(): List<IngredientEntity>
 
-    @Query("SELECT * FROM ingredient_cache")
-    fun observeAll(): Flow<List<IngredientCacheEntity>>
+    @Query("SELECT * FROM ingredients WHERE id = :id")
+    suspend fun getById(id: String): IngredientEntity?
 
-    @Query("SELECT * FROM ingredient_cache WHERE id = :id")
-    suspend fun getById(id: String): IngredientCacheEntity?
-
-    /**
-     * Ricerca full-text con FTS4 (prefix match).
-     * Il carattere `*` abilita il prefix matching: "pomo" -> "pomodoro", "pomodorini", etc.
-     */
+    /** Full-text search with FTS4. */
     @Query("""
-        SELECT ingredient_cache.* FROM ingredient_cache
-        JOIN ingredient_cache_fts ON ingredient_cache.rowid = ingredient_cache_fts.rowid
-        WHERE ingredient_cache_fts MATCH :query
+        SELECT ingredients.* FROM ingredients
+        JOIN ingredient_fts ON ingredients.rowid = ingredient_fts.rowid
+        WHERE ingredient_fts MATCH :query
         LIMIT :limit
     """)
-    suspend fun search(query: String, limit: Int): List<IngredientCacheEntity>
+    suspend fun search(query: String, limit: Int): List<IngredientEntity>
 
     @Upsert
-    suspend fun upsertAll(items: List<IngredientCacheEntity>)
+    suspend fun upsertAll(items: List<IngredientEntity>)
 
-    @Query("DELETE FROM ingredient_cache WHERE isGlobal = :global")
+    /** For internal use. Deletes all ingredients of the given scope (global or personal). */
+    @Query("DELETE FROM ingredients WHERE isGlobal = :global")
     suspend fun deleteByScope(global: Boolean)
 
-    /** Rimpiazza interamente lo scope (globale o personale). Usato dal refresh. */
+    /** Replaces the entire scope (global or personal). Used by the refresh. */
     @Transaction
-    suspend fun replaceScope(global: Boolean, items: List<IngredientCacheEntity>) {
+    suspend fun replaceScope(global: Boolean, items: List<IngredientEntity>) {
+        require(items.all { it.isGlobal == global }) {
+            "All ingredients must have isGlobal = $global"
+        }
         deleteByScope(global)
         upsertAll(items)
     }

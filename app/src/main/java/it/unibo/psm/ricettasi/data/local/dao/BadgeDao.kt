@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BadgeDao {
 
+    // Reactive: sync pull updates badges while Profilo screen is open (UI only reads Flow)
     @Query("SELECT * FROM badges ORDER BY name")
     fun observeBadges(): Flow<List<BadgeEntity>>
 

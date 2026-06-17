@@ -42,6 +42,7 @@ interface RecipeDao {
     @Query("SELECT id FROM recipes WHERE id IN (:ids)")
     suspend fun existingIds(ids: List<String>): List<String>
 
+    // Reactive: sync pull updates favorites + recipe cache while Preferiti screen is open (UI only reads Flow)
     @Transaction
     @Query(
         "SELECT r.* FROM recipes r " +

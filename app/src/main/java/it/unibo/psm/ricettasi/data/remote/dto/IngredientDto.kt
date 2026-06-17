@@ -16,8 +16,10 @@ data class IngredientDto(
     @SerialName(COL_PARENT_INGREDIENT_ID) val parentIngredientId: String? = null,
     @SerialName(COL_CREATED_BY_USER) val createdByUser: Boolean = false,
     @SerialName(COL_USER_ID) val userId: String? = null,
-) {
+) : SyncPayload {
     companion object {
+        const val TABLE = "ingredients"
+        const val COL_ID = "id"
         const val COL_PARENT_INGREDIENT_ID = "parent_ingredient_id"
         const val COL_CREATED_BY_USER = "created_by_user"
         const val COL_USER_ID = "user_id"

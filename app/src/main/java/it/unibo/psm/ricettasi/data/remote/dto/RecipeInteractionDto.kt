@@ -9,8 +9,9 @@ data class FavoriteDto(
     @SerialName(COL_USER_ID) val userId: String,
     @SerialName(COL_RECIPE_ID) val recipeId: String,
     @SerialName(COL_SAVED_DATE) val savedDate: String,
-) {
+) : SyncPayload {
     companion object {
+        const val TABLE = "favorites"
         const val COL_USER_ID = "user_id"
         const val COL_RECIPE_ID = "recipe_id"
         const val COL_SAVED_DATE = "saved_date"
@@ -24,8 +25,10 @@ data class CookedRecipeDto(
     @SerialName(COL_USER_ID) val userId: String,
     @SerialName(COL_RECIPE_ID) val recipeId: String,
     @SerialName(COL_COOKED_DATE) val cookedDate: String,
-) {
+) : SyncPayload {
     companion object {
+        const val TABLE = "cooked_recipes"
+        const val COL_ID = "id"
         const val COL_USER_ID = "user_id"
         const val COL_RECIPE_ID = "recipe_id"
         const val COL_COOKED_DATE = "cooked_date"

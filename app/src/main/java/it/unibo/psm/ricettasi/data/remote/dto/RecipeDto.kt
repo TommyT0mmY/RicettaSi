@@ -24,6 +24,7 @@ data class RecipeDto(
     @SerialName(RecipeCategoryDto.TABLE) val categories: List<RecipeCategoryDto> = emptyList(),
 ) {
     companion object {
+        const val TABLE = "recipes"
         const val COL_ID = "id"
         const val COL_IMAGE_URL = "image_url"
         const val COL_PREPARATION_TIME = "preparation_time"

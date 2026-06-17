@@ -34,7 +34,7 @@ fun RecipeIngredient.toEntity(recipeId: String): RecipeIngredientEntity =
 
 // ---------- meal type and category (relations -> domain lists) ----------
 fun MealType.toEntity(recipeId: String): RecipeMealTypeEntity =
-    RecipeMealTypeEntity(recipeId = recipeId, mealType = value)
+    RecipeMealTypeEntity(recipeId = recipeId, mealType = this)
 
 fun String.toCategoryEntity(recipeId: String): RecipeCategoryEntity =
     RecipeCategoryEntity(recipeId = recipeId, category = this)
@@ -42,7 +42,7 @@ fun String.toCategoryEntity(recipeId: String): RecipeCategoryEntity =
 // ---------- recipe: DTO -> domain ----------
 /**
  * Converts the DTO to a domain [Recipe]. [categoryNames] maps category ids to their
- * display names and is populated from the local [CategoryCacheEntity] table; when a
+ * display names and is populated from the local [CategoryEntity] table; when a
  * category id isn't found the id itself is used as a fallback so the UI never shows
  * an empty chip.
  */
@@ -92,7 +92,7 @@ fun RecipeEntity.toDomain(
     description = description,
     imageUrl = imageUrl,
     preparationTime = preparationTime,
-    difficulty = Difficulty.fromValue(difficulty),
+    difficulty = difficulty,
     steps = recipeJson.decodeFromString(steps),
     ingredients = ingredients,
     mealTypes = mealTypes,
@@ -104,7 +104,7 @@ fun RecipeEntity.toDomain(
 /** Cached recipe + Room relations -> domain. */
 fun RecipeWithRelations.toDomain(): Recipe = recipe.toDomain(
     ingredients = ingredients.map { it.toDomain() },
-    mealTypes = mealTypes.mapNotNull { MealType.fromValue(it.mealType) },
+    mealTypes = mealTypes.map { it.mealType },
     categories = categories.map { it.category },
 )
 
@@ -137,7 +137,7 @@ fun Recipe.toEntity(cachedAt: Instant = Instant.now()): RecipeEntity = RecipeEnt
     description = description,
     imageUrl = imageUrl,
     preparationTime = preparationTime,
-    difficulty = difficulty.value,
+    difficulty = difficulty,
     steps = recipeJson.encodeToString(steps),
     createdByUserId = createdByUserId,
     servings = servings,

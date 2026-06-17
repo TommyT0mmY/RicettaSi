@@ -14,13 +14,19 @@ interface PantryDao {
         "SELECT * FROM pantry_items WHERE consumed = 0 " +
             "ORDER BY (expiryDate IS NULL), expiryDate ASC, addedDate DESC",
     )
+    suspend fun getActive(): List<PantryItemEntity>
+
+    @Query(
+        "SELECT * FROM pantry_items WHERE consumed = 0 " +
+            "ORDER BY (expiryDate IS NULL), expiryDate ASC, addedDate DESC",
+    )
     fun observeActive(): Flow<List<PantryItemEntity>>
 
     @Query("SELECT * FROM pantry_items WHERE consumed = 1 ORDER BY consumedDate DESC")
     fun observeConsumed(): Flow<List<PantryItemEntity>>
 
-    @Query("SELECT * FROM pantry_items WHERE consumed = 0")
-    suspend fun getActive(): List<PantryItemEntity>
+    @Query("SELECT COUNT(*) FROM pantry_items WHERE consumed = 0")
+    fun observeActiveCount(): Flow<Int>
 
     @Query("SELECT * FROM pantry_items WHERE id = :id")
     suspend fun getById(id: String): PantryItemEntity?
@@ -30,9 +36,6 @@ interface PantryDao {
 
     @Upsert
     suspend fun upsertAll(items: List<PantryItemEntity>)
-
-    @Query("UPDATE pantry_items SET consumed = :consumed, consumedDate = :consumedDate WHERE id = :id")
-    suspend fun setConsumed(id: String, consumed: Boolean, consumedDate: Long?)
 
     @Query("DELETE FROM pantry_items WHERE id = :id")
     suspend fun deleteById(id: String)

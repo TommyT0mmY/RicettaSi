@@ -17,6 +17,7 @@ data class UserProfileDto(
     val level: Int = 1,
 ) {
     companion object {
+        const val TABLE = "user_profiles"
         const val COL_USER_ID = "user_id"
         const val COL_DISPLAY_NAME = "display_name"
         const val COL_AVATAR_EMOJI = "avatar_emoji"

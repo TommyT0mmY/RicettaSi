@@ -21,8 +21,9 @@ data class PantryItemDto(
     val consumed: Boolean = false,
     /** timestamptz */
     @SerialName(COL_CONSUMED_DATE) val consumedDate: String? = null,
-) {
+) : SyncPayload {
     companion object {
+        const val TABLE = "pantry_items"
         const val COL_ID = "id"
         const val COL_USER_ID = "user_id"
         const val COL_INGREDIENT_ID = "ingredient_id"

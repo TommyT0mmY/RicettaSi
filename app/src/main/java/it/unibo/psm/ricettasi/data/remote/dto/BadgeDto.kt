@@ -12,6 +12,7 @@ data class BadgeDto(
     val description: String? = null,
 ) {
     companion object {
+        const val TABLE = "badges"
         const val COL_ID = "id"
         const val COL_CODE = "code"
         const val COL_NAME = "name"
@@ -27,6 +28,7 @@ data class UserBadgeDto(
     @SerialName(COL_UNLOCKED_DATE) val unlockedDate: String,
 ) {
     companion object {
+        const val TABLE = "user_badges"
         const val COL_USER_ID = "user_id"
         const val COL_BADGE_ID = "badge_id"
         const val COL_UNLOCKED_DATE = "unlocked_date"

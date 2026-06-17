@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import it.unibo.psm.ricettasi.data.local.dao.BadgeDao
-import it.unibo.psm.ricettasi.data.local.dao.CategoryCacheDao
+import it.unibo.psm.ricettasi.data.local.dao.CategoryDao
 import it.unibo.psm.ricettasi.data.local.dao.CookedRecipeDao
 import it.unibo.psm.ricettasi.data.local.dao.FavoriteDao
 import it.unibo.psm.ricettasi.data.local.dao.IngredientDao
@@ -14,11 +15,11 @@ import it.unibo.psm.ricettasi.data.local.dao.ProfileDao
 import it.unibo.psm.ricettasi.data.local.dao.RecipeDao
 import it.unibo.psm.ricettasi.data.local.dao.SyncQueueDao
 import it.unibo.psm.ricettasi.data.local.entity.BadgeEntity
-import it.unibo.psm.ricettasi.data.local.entity.CategoryCacheEntity
+import it.unibo.psm.ricettasi.data.local.entity.CategoryEntity
 import it.unibo.psm.ricettasi.data.local.entity.CookedRecipeEntity
 import it.unibo.psm.ricettasi.data.local.entity.FavoriteEntity
-import it.unibo.psm.ricettasi.data.local.entity.IngredientCacheEntity
-import it.unibo.psm.ricettasi.data.local.entity.IngredientFts
+import it.unibo.psm.ricettasi.data.local.entity.IngredientEntity
+import it.unibo.psm.ricettasi.data.local.entity.IngredientFtsEntity
 import it.unibo.psm.ricettasi.data.local.entity.PantryItemEntity
 import it.unibo.psm.ricettasi.data.local.entity.RecipeCategoryEntity
 import it.unibo.psm.ricettasi.data.local.entity.RecipeEntity
@@ -30,8 +31,8 @@ import it.unibo.psm.ricettasi.data.local.entity.UserProfileEntity
 
 @Database(
     entities = [
-        IngredientCacheEntity::class,
-        IngredientFts::class,
+        IngredientEntity::class,
+        IngredientFtsEntity::class,
         RecipeEntity::class,
         RecipeIngredientEntity::class,
         RecipeMealTypeEntity::class,
@@ -43,11 +44,12 @@ import it.unibo.psm.ricettasi.data.local.entity.UserProfileEntity
         BadgeEntity::class,
         UserBadgeEntity::class,
         SyncQueueEntity::class,
-        CategoryCacheEntity::class,
+        CategoryEntity::class,
     ],
     version = 1,
     exportSchema = false,
 )
+@TypeConverters(Converters::class)
 abstract class RicettaSiDatabase : RoomDatabase() {
 
     abstract fun ingredientDao(): IngredientDao
@@ -57,7 +59,7 @@ abstract class RicettaSiDatabase : RoomDatabase() {
     abstract fun cookedRecipeDao(): CookedRecipeDao
     abstract fun profileDao(): ProfileDao
     abstract fun badgeDao(): BadgeDao
-    abstract fun categoryCacheDao(): CategoryCacheDao
+    abstract fun categoryDao(): CategoryDao
     abstract fun syncQueueDao(): SyncQueueDao
 
     companion object {

@@ -9,11 +9,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CookedRecipeDao {
 
-    @Query("SELECT * FROM cooked_recipes ORDER BY cookedDate DESC")
-    fun observeAll(): Flow<List<CookedRecipeEntity>>
-
-    @Query("SELECT COUNT(*) FROM cooked_recipes")
-    fun observeCount(): Flow<Int>
+    // Reactive: cooking a recipe updates the Profile screen counter (UI only reads Flow)
+    @Query("SELECT COUNT(DISTINCT recipeId) FROM cooked_recipes")
+    fun observeUniqueCount(): Flow<Int>
 
     @Upsert
     suspend fun upsert(item: CookedRecipeEntity)

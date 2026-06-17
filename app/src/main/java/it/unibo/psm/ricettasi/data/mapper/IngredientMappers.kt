@@ -1,6 +1,6 @@
 package it.unibo.psm.ricettasi.data.mapper
 
-import it.unibo.psm.ricettasi.data.local.entity.IngredientCacheEntity
+import it.unibo.psm.ricettasi.data.local.entity.IngredientEntity
 import it.unibo.psm.ricettasi.data.remote.dto.IngredientDto
 import it.unibo.psm.ricettasi.domain.model.Ingredient
 
@@ -11,21 +11,21 @@ fun IngredientDto.toDomain(): Ingredient = Ingredient(
     createdByUser = createdByUser,
 )
 
-fun IngredientDto.toEntity(): IngredientCacheEntity = IngredientCacheEntity(
+fun IngredientDto.toEntity(): IngredientEntity = IngredientEntity(
     id = id,
     name = name,
     parentIngredientId = parentIngredientId,
     isGlobal = !createdByUser,
 )
 
-fun IngredientCacheEntity.toDomain(): Ingredient = Ingredient(
+fun IngredientEntity.toDomain(): Ingredient = Ingredient(
     id = id,
     name = name,
     parentIngredientId = parentIngredientId,
     createdByUser = !isGlobal,
 )
 
-fun Ingredient.toEntity(): IngredientCacheEntity = IngredientCacheEntity(
+fun Ingredient.toEntity(): IngredientEntity = IngredientEntity(
     id = id,
     name = name,
     parentIngredientId = parentIngredientId,

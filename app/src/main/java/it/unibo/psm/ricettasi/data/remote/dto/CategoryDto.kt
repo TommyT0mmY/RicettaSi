@@ -7,4 +7,8 @@ import kotlinx.serialization.Serializable
 data class CategoryDto(
     val id: String,
     val name: String,
-)
+) {
+    companion object {
+        const val TABLE = "categories"
+    }
+}
