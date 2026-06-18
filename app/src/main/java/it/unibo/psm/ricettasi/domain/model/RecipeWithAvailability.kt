@@ -32,6 +32,9 @@ enum class TimeWindow(val code: String, val label: String) {
  * Active search filters. [mealType] picks at most one value. [difficulties] and
  * [timeWindows] match on OR (any selected value is enough), [categories] and
  * [ingredientIds] match on AND (the recipe must satisfy all selected values).
+ *
+ * Note that [categories] holds category names (not the category id), while
+ * [ingredientIds] holds actual ids. The RPC expects them that way, so don't mix them up.
  */
 data class RecipeFilters(
     val mealType: MealType? = null,
