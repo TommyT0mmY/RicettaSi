@@ -15,5 +15,5 @@ val databaseModule = module {
     single { get<RicettaSiDatabase>().cookedRecipeDao() }
     single { get<RicettaSiDatabase>().syncQueueDao() }
     single { get<RicettaSiDatabase>().badgeDao() }
-    single { get<RicettaSiDatabase>().categoryCacheDao() }
+    single { get<RicettaSiDatabase>().categoryDao() }
 }

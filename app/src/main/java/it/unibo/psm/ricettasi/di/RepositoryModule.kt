@@ -11,7 +11,7 @@ import it.unibo.psm.ricettasi.domain.repository.SessionRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<SessionRepository> { SessionRepositoryImpl(get(), get(), get()) }
+    single<SessionRepository> { SessionRepositoryImpl(get(), get(), get(), get()) }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get(), get(), get()) }
     single<PantryRepository> { PantryRepositoryImpl(get(), get(), get(), get()) }
     single<IngredientRepository> { IngredientRepositoryImpl(get(), get(), get(), get()) }

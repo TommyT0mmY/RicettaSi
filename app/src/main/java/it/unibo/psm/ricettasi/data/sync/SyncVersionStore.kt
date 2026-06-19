@@ -1,6 +1,7 @@
 package it.unibo.psm.ricettasi.data.sync
 
 import android.content.Context
+import androidx.core.content.edit
 
 /** Version counters from the last successful synchronization. */
 data class SyncVersions(
@@ -24,10 +25,12 @@ class SyncVersionStore(context: Context) {
         data = prefs.getLong("data_version", 0),
     )
 
-    fun setGlobal(value: Long) = prefs.edit().putLong("global_version", value).apply()
-    fun setPersonal(value: Long) = prefs.edit().putLong("personal_version", value).apply()
-    fun setData(value: Long) = prefs.edit().putLong("data_version", value).apply()
+    fun setGlobal(value: Long) = prefs.edit { putLong("global_version", value) }
+
+    fun setPersonal(value: Long) = prefs.edit { putLong("personal_version", value) }
+
+    fun setData(value: Long) = prefs.edit { putLong("data_version", value) }
 
     /** Resets counters so the next sync downloads everything from scratch. */
-    fun clear() = prefs.edit().clear().apply()
+    fun clear() = prefs.edit { clear() }
 }

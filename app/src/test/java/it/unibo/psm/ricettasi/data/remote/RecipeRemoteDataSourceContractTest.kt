@@ -1,7 +1,14 @@
 package it.unibo.psm.ricettasi.data.remote
 
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import it.unibo.psm.ricettasi.data.remote.datasource.RecipeRemoteDataSource
+import it.unibo.psm.ricettasi.data.remote.dto.PantryItemDto
 import it.unibo.psm.ricettasi.testutil.LocalSupabaseRule
+import java.time.Instant
+import java.time.LocalDate
+import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -20,7 +27,7 @@ class RecipeRemoteDataSourceContractTest {
     companion object {
         @ClassRule
         @JvmField
-        val supabaseRule = LocalSupabaseRule() // Wrapper to start/stop a local supabase stack
+        val supabaseRule = LocalSupabaseRule()
 
         private lateinit var client: SupabaseClient
         private lateinit var dataSource: RecipeRemoteDataSource
@@ -31,6 +38,23 @@ class RecipeRemoteDataSourceContractTest {
             client = supabaseRule.newClient()
             supabaseRule.authenticateAsNewUser(client)
             dataSource = RecipeRemoteDataSource(client)
+            seedPantry()
+        }
+
+        // Inserts pantry items for the authenticated test user so that the server-side
+        // pantry matching in search_recipes has data to work with.
+        private suspend fun seedPantry() {
+            val userId = client.auth.currentUserOrNull()!!.id
+            val tomorrow = LocalDate.now().plusDays(1).toString()
+            val now = Instant.now().toString()
+            client.from("pantry_items").insert(
+                listOf(
+                    PantryItemDto(id = UUID.randomUUID().toString(), userId = userId, ingredientId = POMODORO, addedDate = now),
+                    PantryItemDto(id = UUID.randomUUID().toString(), userId = userId, ingredientId = PASTA, addedDate = now),
+                    PantryItemDto(id = UUID.randomUUID().toString(), userId = userId, ingredientId = FARINA, addedDate = now, expiryDate = tomorrow),
+                    PantryItemDto(id = UUID.randomUUID().toString(), userId = userId, ingredientId = CIOCCOLATO, addedDate = now, expiryDate = tomorrow),
+                )
+            )
         }
 
         // ids from supabase/seed.sql
@@ -143,11 +167,11 @@ class RecipeRemoteDataSourceContractTest {
         assertEquals(setOf(PANCAKE_VELOCI, EMPTY_RECIPE), results.map { it.id }.toSet())
     }
 
-    // both pomodoro and pasta are in the pantry, so the recipe using exactly those two
-    // ingredients gets a full 2 out of 2 match and is ranked first.
+    // pomodoro and pasta are in the pantry (seeded in setUpClient), so the recipe using
+    // exactly those two ingredients gets a full 2 out of 2 match and is ranked first.
     @Test
     fun `searchRecipes computes pantry match and orders the best match first`() = runBlocking {
-        val results = dataSource.searchRecipes(pantryRoots = listOf(POMODORO, PASTA), orderBy = "match")
+        val results = dataSource.searchRecipes(orderBy = "match")
 
         val best = results.first()
         assertEquals(PASTA_AL_POMODORO, best.id)
@@ -155,9 +179,11 @@ class RecipeRemoteDataSourceContractTest {
         assertEquals(2, best.requiredCount)
     }
 
+    // farina and cioccolato are seeded with expiry tomorrow (within 3 days), so they count
+    // as expiring. torta al cioccolato uses both and should rank first.
     @Test
     fun `searchRecipes computes expiring ingredient match and orders the most expiring first`() = runBlocking {
-        val results = dataSource.searchRecipes(expiringRoots = listOf(FARINA, CIOCCOLATO), orderBy = "expiring")
+        val results = dataSource.searchRecipes(orderBy = "expiring")
 
         val best = results.first()
         assertEquals(TORTA_AL_CIOCCOLATO, best.id)
@@ -165,9 +191,12 @@ class RecipeRemoteDataSourceContractTest {
     }
 
     @Test
-    fun `searchRecipes respects minAvailable even without an orderBy`() = runBlocking {
-        val results = dataSource.searchRecipes(pantryRoots = listOf(POMODORO, PASTA), minAvailable = 2)
+    fun `searchRecipes respects minAvailable`() = runBlocking {
+        val results = dataSource.searchRecipes(minAvailable = 2)
 
-        assertEquals(listOf(PASTA_AL_POMODORO), results.map { it.id })
+        // Both Pasta al pomodoro (pomodoro + pasta) and Torta al cioccolato (farina + cioccolato)
+        // have 2 pantry ingredients available, so both pass the filter. Pancake veloci only
+        // has farina (available_count = 1) and is excluded.
+        assertEquals(listOf(PASTA_AL_POMODORO, TORTA_AL_CIOCCOLATO), results.map { it.id })
     }
 }
