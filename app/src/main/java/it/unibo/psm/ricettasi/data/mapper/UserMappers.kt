@@ -15,7 +15,6 @@ import java.time.Instant
 fun UserProfileDto.toDomain(): UserProfile = UserProfile(
     userId = userId,
     displayName = displayName,
-    avatarEmoji = avatarEmoji,
     xp = xp,
     level = level,
 )
@@ -23,7 +22,6 @@ fun UserProfileDto.toDomain(): UserProfile = UserProfile(
 fun UserProfileEntity.toDomain(): UserProfile = UserProfile(
     userId = userId,
     displayName = displayName,
-    avatarEmoji = avatarEmoji,
     xp = xp,
     level = level,
 )
@@ -31,7 +29,6 @@ fun UserProfileEntity.toDomain(): UserProfile = UserProfile(
 fun UserProfile.toEntity(): UserProfileEntity = UserProfileEntity(
     userId = userId,
     displayName = displayName,
-    avatarEmoji = avatarEmoji,
     xp = xp,
     level = level,
 )

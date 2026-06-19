@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 data class UserProfileEntity(
     @PrimaryKey val userId: String,
     val displayName: String,
-    val avatarEmoji: String,
     val xp: Int,
     val level: Int,
 )

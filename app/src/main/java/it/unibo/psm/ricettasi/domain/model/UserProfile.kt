@@ -21,13 +21,11 @@ fun xpRewardFor(difficulty: Difficulty): Int = when (difficulty) {
 
 /**
  * The logged-in user's profile, gamification stats included. Badges themselves are tracked
- * separately, this only holds xp and level. [avatarEmoji] defaults to a little chef so a
- * brand new account doesn't show up with a blank circle before the user picks something.
+ * separately, this only holds xp and level.
  */
 data class UserProfile(
     val userId: String,
     val displayName: String,
-    val avatarEmoji: String = "👨‍🍳",
     val xp: Int = 0,
     val level: Int = levelForXp(xp),
 )
