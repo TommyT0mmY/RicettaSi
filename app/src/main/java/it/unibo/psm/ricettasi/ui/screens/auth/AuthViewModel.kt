@@ -1,12 +1,13 @@
 package it.unibo.psm.ricettasi.ui.screens.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.jan.supabase.exceptions.RestException
 import it.unibo.psm.ricettasi.domain.repository.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -17,6 +18,10 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     private val sessionRepository: SessionRepository,
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "AuthViewModel"
+    }
 
     private val _isSubmitting = MutableStateFlow(false)
     val isSubmitting: StateFlow<Boolean> = _isSubmitting.asStateFlow()
@@ -48,9 +53,22 @@ class AuthViewModel(
             try {
                 action()
                 _isSubmitting.value = false
+            } catch (e: RestException) {
+                _isSubmitting.value = false
+
+
+                _errorMessage.value = when (e.statusCode) {
+                    401 -> "Email o password errati."
+                    400, 422 -> "Email o password non validi."
+                    429 -> "Troppi tentativi. Riprova tra poco."
+                    in 400..499 -> "Errore di autenticazione. Riprova."
+                    else -> "Il server non risponde. Riprova tra poco."
+                }
+                Log.w(TAG, "Auth error (status=${e.statusCode})", e)
             } catch (e: Exception) {
                 _isSubmitting.value = false
-                _errorMessage.value = e.message
+                _errorMessage.value = "Problema di connessione. Controlla la rete."
+                Log.w(TAG, "Auth error (network)", e)
             }
         }
     }
