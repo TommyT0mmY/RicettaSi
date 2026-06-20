@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Moon icon - stroke based -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M21,12.79C20.84,14.08 20.37,15.31 19.63,16.38C18.89,17.44 17.9,18.32 16.74,18.93C15.59,19.55 14.3,19.88 13,19.88C11.7,19.88 10.41,19.55 9.26,18.93C8.1,18.32 7.11,17.44 6.37,16.38C5.63,15.31 5.16,14.08 5,12.79C4.84,11.5 4.99,10.21 5.43,9C8.96,10.67 13.31,10.01 16.22,7.37C18.03,5.74 19.06,3.44 19.06,1C19.84,1.65 20.46,2.47 20.88,3.4C21.57,4.75 21.89,6.25 21.81,7.76C21.74,9.27 21.27,10.73 20.46,12C21.1,12.17 21.68,12.5 22.15,12.97C22.36,13.21 22.54,13.47 22.68,13.75C22.18,13.35 21.6,13.04 21,12.79Z"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round"
+        android:strokeColor="#2A2421" />
+</vector>

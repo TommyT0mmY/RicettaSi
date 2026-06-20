@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Lucide trophy icon - stroke based -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M6,9H4.5C3.84,9 3.2,8.7 2.76,8.17C2.32,7.63 2.13,6.92 2.22,6.21C2.46,4.23 3.64,2.53 5.35,1.6C5.72,1.4 6.16,1.35 6.58,1.48C7,1.6 7.34,1.89 7.53,2.27L9,5"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FF8A58" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M18,9H19.5C20.16,9 20.8,8.7 21.24,8.17C21.68,7.63 21.87,6.92 21.78,6.21C21.54,4.23 20.36,2.53 18.65,1.6C18.28,1.4 17.84,1.35 17.42,1.48C17,1.6 16.66,1.89 16.47,2.27L15,5"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FF8A58" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,15C9.24,15 7,12.76 7,10V5C7,4.47 7.21,3.96 7.59,3.59C7.96,3.21 8.47,3 9,3H15C15.53,3 16.04,3.21 16.41,3.59C16.79,3.96 17,4.47 17,5V10C17,12.76 14.76,15 12,15Z"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round"
+        android:strokeColor="#FF8A58" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,15V22"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#FF8A58" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M8,22H16"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeColor="#FF8A58" />
+</vector>
