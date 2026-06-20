@@ -5,12 +5,16 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import it.unibo.psm.ricettasi.data.local.entity.IngredientEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IngredientDao {
 
     @Query("SELECT * FROM ingredients")
     suspend fun getAll(): List<IngredientEntity>
+
+    @Query("SELECT * FROM ingredients ORDER BY name ASC")
+    fun observeAll(): Flow<List<IngredientEntity>>
 
     @Query("SELECT * FROM ingredients WHERE id = :id")
     suspend fun getById(id: String): IngredientEntity?

@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import it.unibo.psm.ricettasi.ui.screens.home.HomeRoute
 import it.unibo.psm.ricettasi.ui.screens.pantry.PantryRoute
 import it.unibo.psm.ricettasi.ui.screens.profile.ProfiloRoute
 import it.unibo.psm.ricettasi.ui.screens.recipe.RecipeDetailRoute
@@ -72,7 +73,21 @@ fun RicettaSiNavHost() {
             startDestination = Routes.HOME,
             modifier = Modifier.padding(innerPadding),
         ) {
+            composable(Routes.HOME) {
+                HomeRoute(
+                    onNavigateToRecipe = { id -> navController.navigate(Routes.recipeDetail(id)) },
+                    onNavigateToSvuotaIlFrigo = { navController.navigate(Routes.SVUOTA_IL_FRIGO) },
+                    onNavigateToPantry = {
+                        navController.navigate(Routes.PANTRY) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
             composable(Routes.PANTRY) { PantryRoute() }
+            composable(Routes.SVUOTA_IL_FRIGO) { TabPlaceholder("Svuota il frigo") }
 
             composable(Routes.PROFILO) {
                 ProfiloRoute(
@@ -100,7 +115,6 @@ fun RicettaSiNavHost() {
             }
 
             // -- Tab: placeholder (for screens not yet implemented) --
-            composable(Routes.HOME) { TabPlaceholder("Home") }
             composable(Routes.ESPLORA) { TabPlaceholder("Esplora") }
             composable(Routes.PREFERITI) { TabPlaceholder("Preferiti") }
         }

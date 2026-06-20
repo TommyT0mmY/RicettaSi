@@ -17,6 +17,11 @@ interface FavoriteDao {
     @Query("SELECT COUNT(*) FROM favorites")
     fun observeCount(): Flow<Int>
 
+    // Just the ids, so a card heart can reflect a favourite even when the recipe itself
+    // isn't in the local cache yet (Home lists come from remote search, not from Room)
+    @Query("SELECT recipeId FROM favorites")
+    fun observeFavoriteIds(): Flow<List<String>>
+
     @Upsert
     suspend fun upsert(item: FavoriteEntity)
 

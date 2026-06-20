@@ -9,6 +9,8 @@ import it.unibo.psm.ricettasi.data.sync.SyncWriter
 import it.unibo.psm.ricettasi.domain.model.Ingredient
 import it.unibo.psm.ricettasi.domain.repository.IngredientRepository
 import it.unibo.psm.ricettasi.domain.repository.SessionRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.UUID
 
 class IngredientRepositoryImpl(
@@ -16,6 +18,9 @@ class IngredientRepositoryImpl(
     private val syncWriter: SyncWriter,
     private val session: SessionRepository,
 ) : IngredientRepository {
+
+    override fun observeAll(): Flow<List<Ingredient>> =
+        ingredientDao.observeAll().map { list -> list.map { it.toDomain() } }
 
     override suspend fun search(query: String, limit: Int): List<Ingredient> {
         if (query.isBlank()) return emptyList()

@@ -47,6 +47,9 @@ class RecipeRepositoryImpl(
     override fun observeFavorites(): Flow<List<Recipe>> =
         recipeDao.observeFavorites().map { list -> list.map { it.toDomain() } }
 
+    override fun observeFavoriteIds(): Flow<List<String>> =
+        favoriteDao.observeFavoriteIds()
+
     override fun observeIsFavorite(recipeId: String): Flow<Boolean> =
         favoriteDao.observeIsFavorite(recipeId)
 

@@ -19,6 +19,8 @@ object Routes {
 
     const val RECIPE_DETAIL = "recipe/{recipeId}"
     fun recipeDetail(recipeId: String) = "recipe/$recipeId"
+
+    const val SVUOTA_IL_FRIGO = "svuota_il_frigo"
 }
 
 /** Bottom bar entry: route, label and icon. */

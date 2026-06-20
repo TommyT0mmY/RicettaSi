@@ -17,6 +17,9 @@ interface RecipeRepository {
     /** Reactive: cross-device sync or Dettaglio unfavorite updates Preferiti list. */
     fun observeFavorites(): Flow<List<Recipe>>
 
+    /** Reactive ids of every favourited recipe, even ones not in the local cache. Drives the heart on list cards. */
+    fun observeFavoriteIds(): Flow<List<String>>
+
     /** Reactive: sync pull replaces favorites, heart icon updates automatically. */
     fun observeIsFavorite(recipeId: String): Flow<Boolean>
 
