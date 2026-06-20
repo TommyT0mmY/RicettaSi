@@ -8,5 +8,6 @@ val appModules: List<Module> = listOf(
     databaseModule,
     syncModule,
     repositoryModule,
+    settingsModule,
     viewModelModule,
 )
