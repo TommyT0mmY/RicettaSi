@@ -20,8 +20,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,14 +44,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import it.unibo.psm.ricettasi.R
 import it.unibo.psm.ricettasi.domain.model.Difficulty
 import it.unibo.psm.ricettasi.domain.model.MealType
 import it.unibo.psm.ricettasi.domain.model.Recipe
@@ -329,7 +330,7 @@ private fun HeroSection(
                     .background(OverlayCircleBg),
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_chevron_left),
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Indietro",
                     tint = WarmBlack,
                     modifier = Modifier.size(20.dp),
@@ -361,7 +362,7 @@ private fun HeroSection(
                         .background(OverlayCircleBg),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_flame_heart),
+                        imageVector = Icons.Outlined.FavoriteBorder,
                         contentDescription = "Preferiti",
                         tint = if (isFavorite) AccentColor else WarmBlack,
                         modifier = Modifier.size(20.dp),
@@ -438,7 +439,7 @@ private fun MetadataCard(
             MetadataColumn(
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_chef_hat),
+                        imageVector = Icons.Outlined.Star,
                         contentDescription = "Difficolta'",
                         tint = AccentColor,
                         modifier = Modifier.size(IconSm),
@@ -644,7 +645,9 @@ private fun IngredientsTab(
             )
         } else {
             ingredients.forEachIndexed { index, ingredient ->
-                val name = ingredientNames[ingredient.ingredientId] ?: ingredient.ingredientId
+                val name = ingredient.name
+                    ?: ingredientNames[ingredient.ingredientId]
+                    ?: ingredient.ingredientId
                 val quantity = ingredient.quantity?.let { scaleQuantity(it, servings) }
 
                 Row(

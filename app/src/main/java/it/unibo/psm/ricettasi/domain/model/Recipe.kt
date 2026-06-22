@@ -48,6 +48,8 @@ enum class MealType(val value: String) {
 data class RecipeIngredient(
     val ingredientId: String,
     val quantity: String? = null,
+    /** Resolved at display time from the API embed or local ingredient table. */
+    val name: String? = null,
 )
 
 /**

@@ -37,7 +37,13 @@ data class RecipeDto(
 data class RecipeIngredientDto(
     @SerialName(COL_INGREDIENT_ID) val ingredientId: String,
     val quantity: String? = null,
+    /** Embedded via PostgREST resource embedding (`ingredients(name)`). */
+    @SerialName("ingredients") val ingredient: IngredientNameEmbed? = null,
 ) {
+    /** Shape of the embedded `ingredients` row. */
+    @Serializable
+    data class IngredientNameEmbed(val name: String)
+
     companion object {
         const val TABLE = "recipe_ingredients"
         const val COL_INGREDIENT_ID = "ingredient_id"

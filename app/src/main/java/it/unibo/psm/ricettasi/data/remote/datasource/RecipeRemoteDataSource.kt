@@ -31,7 +31,7 @@ class RecipeRemoteDataSource(
      */
     private val fullColumns = Columns.raw(
         "*," +
-            "${RecipeIngredientDto.TABLE}(${RecipeIngredientDto.COL_INGREDIENT_ID},${RecipeIngredientDto.COL_QUANTITY})," +
+            "${RecipeIngredientDto.TABLE}(${RecipeIngredientDto.COL_INGREDIENT_ID},${RecipeIngredientDto.COL_QUANTITY},ingredients(name))," +
             "${RecipeMealTypeDto.TABLE}(${RecipeMealTypeDto.COL_MEAL_TYPE})," +
             "${RecipeCategoryDto.TABLE}(${RecipeCategoryDto.COL_CATEGORY_ID})",
     )

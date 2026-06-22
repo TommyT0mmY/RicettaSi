@@ -24,10 +24,10 @@ private val recipeJson = Json { ignoreUnknownKeys = true }
 
 // ---------- recipe ingredient ----------
 fun RecipeIngredientDto.toDomain(): RecipeIngredient =
-    RecipeIngredient(ingredientId = ingredientId, quantity = quantity)
+    RecipeIngredient(ingredientId = ingredientId, quantity = quantity, name = ingredient?.name)
 
 fun RecipeIngredientEntity.toDomain(): RecipeIngredient =
-    RecipeIngredient(ingredientId = ingredientId, quantity = quantity)
+    RecipeIngredient(ingredientId = ingredientId, quantity = quantity, name = null)
 
 fun RecipeIngredient.toEntity(recipeId: String): RecipeIngredientEntity =
     RecipeIngredientEntity(recipeId = recipeId, ingredientId = ingredientId, quantity = quantity)
