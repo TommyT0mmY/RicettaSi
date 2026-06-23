@@ -21,8 +21,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import it.unibo.psm.ricettasi.ui.screens.esplora.EsploraRoute
 import it.unibo.psm.ricettasi.ui.screens.home.HomeRoute
 import it.unibo.psm.ricettasi.ui.screens.pantry.PantryRoute
+import it.unibo.psm.ricettasi.ui.screens.preferiti.PreferitiRoute
 import it.unibo.psm.ricettasi.ui.screens.profile.ProfiloRoute
 import it.unibo.psm.ricettasi.ui.screens.recipe.RecipeDetailRoute
 import it.unibo.psm.ricettasi.ui.screens.settings.SettingsRoute
@@ -114,9 +116,16 @@ fun RicettaSiNavHost() {
                 )
             }
 
-            // -- Tab: placeholder (for screens not yet implemented) --
-            composable(Routes.ESPLORA) { TabPlaceholder("Esplora") }
-            composable(Routes.PREFERITI) { TabPlaceholder("Preferiti") }
+            composable(Routes.ESPLORA) {
+                EsploraRoute(
+                    onNavigateToRecipe = { id -> navController.navigate(Routes.recipeDetail(id)) },
+                )
+            }
+            composable(Routes.PREFERITI) {
+                PreferitiRoute(
+                    onNavigateToRecipe = { id -> navController.navigate(Routes.recipeDetail(id)) },
+                )
+            }
         }
     }
 }
