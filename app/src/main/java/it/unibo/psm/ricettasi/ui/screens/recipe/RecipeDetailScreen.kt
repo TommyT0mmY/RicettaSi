@@ -22,9 +22,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -108,7 +107,6 @@ fun RecipeDetailRoute(
     viewModel: RecipeDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     LaunchedEffect(recipeId) {
         viewModel.init(recipeId)
@@ -119,7 +117,6 @@ fun RecipeDetailRoute(
         onBack = onBack,
         onToggleFavorite = viewModel::toggleFavorite,
         onMarkCooked = viewModel::markCooked,
-        onShare = { viewModel.share(context) },
     )
 }
 
@@ -131,7 +128,6 @@ private fun RecipeDetailScreen(
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
     onMarkCooked: () -> Unit,
-    onShare: () -> Unit,
 ) {
     when {
         state.isLoading && state.recipe == null -> LoadingContent()
@@ -144,7 +140,6 @@ private fun RecipeDetailScreen(
             onBack = onBack,
             onToggleFavorite = onToggleFavorite,
             onMarkCooked = onMarkCooked,
-            onShare = onShare,
         )
     }
 }
@@ -195,7 +190,6 @@ private fun RecipeContent(
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
     onMarkCooked: () -> Unit,
-    onShare: () -> Unit,
 ) {
     val recipe = state.recipe ?: return
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -220,7 +214,6 @@ private fun RecipeContent(
                 isFavorite = state.isFavorite,
                 onBack = onBack,
                 onToggleFavorite = onToggleFavorite,
-                onShare = onShare,
             )
 
             Spacer(Modifier.height(SpaceLg))
@@ -292,7 +285,6 @@ private fun HeroSection(
     isFavorite: Boolean,
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
-    onShare: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -348,37 +340,20 @@ private fun HeroSection(
                 )
             }
 
-            // Share + Favourite
-            Row(horizontalArrangement = Arrangement.spacedBy(SpaceSm)) {
-                IconButton(
-                    onClick = onShare,
-                    modifier = Modifier
-                        .size(IconBtn)
-                        .clip(CircleShape)
-                        .background(OverlayCircleBg),
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Share,
-                        contentDescription = "Condividi",
-                        tint = WarmBlack,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-
-                IconButton(
-                    onClick = onToggleFavorite,
-                    modifier = Modifier
-                        .size(IconBtn)
-                        .clip(CircleShape)
-                        .background(OverlayCircleBg),
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Preferiti",
-                        tint = if (isFavorite) AccentColor else WarmBlack,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
+            // Favourite
+            IconButton(
+                onClick = onToggleFavorite,
+                modifier = Modifier
+                    .size(IconBtn)
+                    .clip(CircleShape)
+                    .background(OverlayCircleBg),
+            ) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = if (isFavorite) "Rimuovi dai preferiti" else "Aggiungi ai preferiti",
+                    tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp),
+                )
             }
         }
     }
