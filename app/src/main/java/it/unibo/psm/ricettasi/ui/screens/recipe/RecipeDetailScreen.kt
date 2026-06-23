@@ -21,10 +21,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -115,6 +118,7 @@ fun RecipeDetailRoute(
         state = state,
         onBack = onBack,
         onToggleFavorite = viewModel::toggleFavorite,
+        onMarkCooked = viewModel::markCooked,
         onShare = { viewModel.share(context) },
     )
 }
@@ -126,6 +130,7 @@ private fun RecipeDetailScreen(
     state: RecipeDetailUiState,
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
+    onMarkCooked: () -> Unit,
     onShare: () -> Unit,
 ) {
     when {
@@ -138,6 +143,7 @@ private fun RecipeDetailScreen(
             state = state,
             onBack = onBack,
             onToggleFavorite = onToggleFavorite,
+            onMarkCooked = onMarkCooked,
             onShare = onShare,
         )
     }
@@ -188,6 +194,7 @@ private fun RecipeContent(
     state: RecipeDetailUiState,
     onBack: () -> Unit,
     onToggleFavorite: () -> Unit,
+    onMarkCooked: () -> Unit,
     onShare: () -> Unit,
 ) {
     val recipe = state.recipe ?: return
@@ -262,7 +269,11 @@ private fun RecipeContent(
                     ingredients = recipe.ingredients,
                     ingredientNames = state.ingredientNames,
                 )
-                1 -> PreparationTab(steps = recipe.steps)
+                1 -> PreparationTab(
+                    steps = recipe.steps,
+                    isCooked = state.isCooked,
+                    onMarkCooked = onMarkCooked,
+                )
             }
 
             // Bottom spacing so content isn't clipped by the nav bar
@@ -693,7 +704,11 @@ private fun IngredientsTab(
 // -- 6b. Preparation tab --
 
 @Composable
-private fun PreparationTab(steps: List<String>) {
+private fun PreparationTab(
+    steps: List<String>,
+    isCooked: Boolean,
+    onMarkCooked: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -713,6 +728,38 @@ private fun PreparationTab(steps: List<String>) {
             steps.forEachIndexed { index, step ->
                 StepCard(stepNumber = index + 1, text = step)
             }
+        }
+
+        // "Cucinato" button — appears after the last step
+        Spacer(Modifier.height(SpaceMd))
+        Button(
+            onClick = onMarkCooked,
+            enabled = !isCooked,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(RoundedLg),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isCooked) SecondaryGrey else AccentColor,
+                disabledContainerColor = SecondaryGrey.copy(alpha = 0.3f),
+            ),
+        ) {
+            if (isCooked) {
+                Icon(
+                    imageVector = Icons.Outlined.Check,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(IconSm),
+                )
+                Spacer(Modifier.width(SpaceSm))
+            }
+            Text(
+                text = if (isCooked) "Gia' cucinata" else "L'ho cucinata!",
+                fontFamily = ManropeFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+                color = Color.Black,
+            )
         }
     }
 }

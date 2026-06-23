@@ -135,6 +135,9 @@ class RecipeRepositoryImpl(
         }
     }
 
+    override fun observeIsCooked(recipeId: String): Flow<Boolean> =
+        cookedRecipeDao.observeExistsByRecipeId(recipeId)
+
     private suspend fun cacheRecipe(recipe: Recipe) {
         recipeDao.upsertFull(
             recipe = recipe.toEntity(),

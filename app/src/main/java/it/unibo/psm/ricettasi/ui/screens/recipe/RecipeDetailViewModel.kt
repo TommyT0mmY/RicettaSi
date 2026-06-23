@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 data class RecipeDetailUiState(
     val recipe: Recipe? = null,
     val isFavorite: Boolean = false,
+    val isCooked: Boolean = false,
     /** Maps ingredientId -> display name, resolved from the ingredient table. */
     val ingredientNames: Map<String, String> = emptyMap(),
     val isLoading: Boolean = true,
@@ -84,12 +85,26 @@ class RecipeDetailViewModel(
                 _uiState.update { it.copy(isFavorite = fav) }
             }
         }
+
+        // Reactive cooked observation
+        viewModelScope.launch {
+            recipeRepository.observeIsCooked(recipeId).collect { cooked ->
+                _uiState.update { it.copy(isCooked = cooked) }
+            }
+        }
     }
 
     fun toggleFavorite() {
         val id = currentRecipeId ?: return
         viewModelScope.launch {
             recipeRepository.setFavorite(id, !_uiState.value.isFavorite)
+        }
+    }
+
+    fun markCooked() {
+        val id = currentRecipeId ?: return
+        viewModelScope.launch {
+            recipeRepository.recordCooked(id)
         }
     }
 

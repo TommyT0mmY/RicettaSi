@@ -49,4 +49,7 @@ interface RecipeRepository {
 
     /** Records "Cucinato": awards XP and re-evaluates badges server-side. */
     suspend fun recordCooked(recipeId: String)
+
+    /** Whether the current user has cooked this recipe at least once. */
+    fun observeIsCooked(recipeId: String): Flow<Boolean>
 }
