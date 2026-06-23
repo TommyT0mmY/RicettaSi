@@ -44,7 +44,7 @@ class RecipeDetailViewModel(
         if (recipeId == currentRecipeId) return
         currentRecipeId = recipeId
 
-        _uiState.update { it.copy(isLoading = true, errorMessage = null, recipe = null) }
+        _uiState.update { it.copy(isLoading = true, errorMessage = null, recipe = null, isCooked = false) }
 
         viewModelScope.launch {
             val recipe = recipeRepository.loadAndCacheRecipe(recipeId)
@@ -85,13 +85,6 @@ class RecipeDetailViewModel(
                 _uiState.update { it.copy(isFavorite = fav) }
             }
         }
-
-        // Reactive cooked observation
-        viewModelScope.launch {
-            recipeRepository.observeIsCooked(recipeId).collect { cooked ->
-                _uiState.update { it.copy(isCooked = cooked) }
-            }
-        }
     }
 
     fun toggleFavorite() {
@@ -105,6 +98,7 @@ class RecipeDetailViewModel(
         val id = currentRecipeId ?: return
         viewModelScope.launch {
             recipeRepository.recordCooked(id)
+            _uiState.update { it.copy(isCooked = true) }
         }
     }
 
