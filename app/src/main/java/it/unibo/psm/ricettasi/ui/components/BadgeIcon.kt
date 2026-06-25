@@ -1,49 +1,58 @@
 package it.unibo.psm.ricettasi.ui.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.CollectionsBookmark
+import androidx.compose.material.icons.outlined.Eco
+import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.FreeBreakfast
+import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.NightsStay
+import androidx.compose.material.icons.outlined.Restaurant
+import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.outlined.TravelExplore
+import androidx.compose.material.icons.outlined.WorkspacePremium
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import it.unibo.psm.ricettasi.R
 import it.unibo.psm.ricettasi.domain.model.Badge
+import it.unibo.psm.ricettasi.ui.theme.SpaceMd
+import it.unibo.psm.ricettasi.ui.theme.SpaceSm
 
 /**
- * Resolves a badge [code] to its bundled vector drawable.
+ * Resolves a badge [code] to its Material icon.
  *
- * The mapping is explicit (no reflection) so that ProGuard/R8 cannot strip
- * the resources. Unknown codes return the fallback trophy icon.
+ * The mapping uses the extended Material Icons set, so every icon is
+ * available without custom bundled drawables.
  */
-@DrawableRes
-fun badgeDrawableRes(code: String): Int = when (code) {
-    "primo-piatto"       -> R.drawable.badge_primo_piatto
-    "cuoco-abituale"     -> R.drawable.badge_cuoco_abituale
-    "repertorio-vario"   -> R.drawable.badge_repertorio_vario
-    "esploratore"        -> R.drawable.badge_esploratore
-    "dispensa-piena"     -> R.drawable.badge_dispensa_piena
-    "collezionista"      -> R.drawable.badge_collezionista
-    "esperto"            -> R.drawable.badge_esperto
-    "maestro"            -> R.drawable.badge_maestro
-    "salva-cibo"         -> R.drawable.badge_salva_cibo
-    "gufo-fornelli"      -> R.drawable.badge_gufo_fornelli
-    "cucina-lampo"       -> R.drawable.badge_cucina_lampo
-    "colazione-campioni" -> R.drawable.badge_colazione_campioni
-    else                 -> R.drawable.badge_fallback
+internal fun badgeIcon(code: String): ImageVector = when (code) {
+    "primo-piatto"       -> Icons.Outlined.Restaurant
+    "cuoco-abituale"     -> Icons.Outlined.Star
+    "repertorio-vario"   -> Icons.Outlined.AutoAwesome
+    "esploratore"        -> Icons.Outlined.TravelExplore
+    "dispensa-piena"     -> Icons.Outlined.Inventory2
+    "collezionista"      -> Icons.Outlined.CollectionsBookmark
+    "esperto"            -> Icons.Outlined.WorkspacePremium
+    "maestro"            -> Icons.Outlined.School
+    "salva-cibo"         -> Icons.Outlined.Eco
+    "gufo-fornelli"      -> Icons.Outlined.NightsStay
+    "cucina-lampo"       -> Icons.Outlined.Bolt
+    "colazione-campioni" -> Icons.Outlined.FreeBreakfast
+    else                 -> Icons.Outlined.EmojiEvents
 }
 
 /** A single badge icon, sized for grids and lists. */
@@ -54,20 +63,12 @@ fun BadgeIcon(
     modifier: Modifier = Modifier,
     size: Dp = 64.dp,
 ) {
-    val resId = badgeDrawableRes(badge.code)
-
-    Image(
-        painter = painterResource(id = resId),
+    Icon(
+        imageVector = badgeIcon(badge.code),
         contentDescription = badge.name,
-        modifier = modifier
-            .size(size)
-            .then(
-                if (unlocked) Modifier
-                else Modifier.alpha(0.38f)
-            ),
-        contentScale = ContentScale.Fit,
-        colorFilter = if (unlocked) null
-        else ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
+        tint = if (unlocked) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
+        modifier = modifier.size(size),
     )
 }
 
@@ -84,7 +85,7 @@ fun BadgeGridItem(
     iconSize: Dp = 56.dp,
 ) {
     Column(
-        modifier = modifier.padding(8.dp),
+        modifier = modifier.padding(SpaceMd),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         BadgeIcon(
@@ -98,7 +99,7 @@ fun BadgeGridItem(
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = SpaceSm),
         )
     }
 }

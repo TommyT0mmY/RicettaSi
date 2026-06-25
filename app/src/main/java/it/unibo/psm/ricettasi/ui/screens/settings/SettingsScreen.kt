@@ -18,6 +18,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.DesktopWindows
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -32,11 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import it.unibo.psm.ricettasi.R
 import it.unibo.psm.ricettasi.data.settings.ThemeOption
 import it.unibo.psm.ricettasi.ui.theme.FrauncesFamily
 import it.unibo.psm.ricettasi.ui.theme.IconBtn
@@ -210,10 +212,10 @@ private fun ThemeRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Leading icon circle
-        val (iconRes, circleBg) = when (option) {
-            ThemeOption.LIGHT -> R.drawable.ic_sun to MaterialTheme.colorScheme.primary
-            ThemeOption.DARK -> R.drawable.ic_moon to Color(0xFFF0F0F0)
-            ThemeOption.AUTO -> R.drawable.ic_monitor to Color(0xFFF0F0F0)
+        val (iconVector, circleBg) = when (option) {
+            ThemeOption.LIGHT -> Icons.Outlined.WbSunny to MaterialTheme.colorScheme.primary
+            ThemeOption.DARK -> Icons.Outlined.DarkMode to Color(0xFFF0F0F0)
+            ThemeOption.AUTO -> Icons.Outlined.DesktopWindows to Color(0xFFF0F0F0)
         }
         val iconTint = when (option) {
             ThemeOption.LIGHT -> MaterialTheme.colorScheme.onPrimary
@@ -228,7 +230,7 @@ private fun ThemeRow(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                painter = painterResource(id = iconRes),
+                imageVector = iconVector,
                 contentDescription = option.label,
                 tint = iconTint,
                 modifier = Modifier.size(18.dp),
@@ -319,7 +321,7 @@ private fun LogoutBlock(onClick: () -> Unit) {
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_logout),
+                    imageVector = Icons.Outlined.Logout,
                     contentDescription = "Esci",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp),

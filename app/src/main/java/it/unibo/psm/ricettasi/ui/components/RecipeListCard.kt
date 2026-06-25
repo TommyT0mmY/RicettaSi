@@ -33,6 +33,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import it.unibo.psm.ricettasi.domain.model.Difficulty
 import it.unibo.psm.ricettasi.domain.model.RecipeWithAvailability
+import it.unibo.psm.ricettasi.ui.theme.CardElevation
+import it.unibo.psm.ricettasi.ui.theme.CardImg
+import it.unibo.psm.ricettasi.ui.theme.RoundedFull
+import it.unibo.psm.ricettasi.ui.theme.RoundedLg
+import it.unibo.psm.ricettasi.ui.theme.RoundedMd
+import it.unibo.psm.ricettasi.ui.theme.SpaceLg
+import it.unibo.psm.ricettasi.ui.theme.SpaceSm
+import it.unibo.psm.ricettasi.ui.theme.SpaceXs
 import it.unibo.psm.ricettasi.ui.theme.customColors
 
 /** Italian label shown for a recipe difficulty on the cards. */
@@ -59,24 +67,24 @@ fun RecipeListCard(
     val summary = item.recipe
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(RoundedLg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(SpaceLg),
             verticalAlignment = Alignment.Top,
         ) {
             RecipeImage(
                 imageUrl = summary.imageUrl,
                 modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(12.dp)),
+                    .size(CardImg)
+                    .clip(RoundedCornerShape(RoundedMd)),
             )
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(SpaceLg))
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
@@ -87,7 +95,7 @@ fun RecipeListCard(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f),
                     )
-                    Spacer(Modifier.width(4.dp))
+                    Spacer(Modifier.width(SpaceSm))
                     IconButton(
                         onClick = { onToggleFavorite(summary.id) },
                         modifier = Modifier.size(32.dp),
@@ -167,9 +175,9 @@ private fun MatchBadge(percent: Int) {
     }
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(100.dp))
+            .clip(RoundedCornerShape(RoundedFull))
             .background(bgColor)
-            .padding(horizontal = 6.dp, vertical = 2.dp),
+            .padding(horizontal = 6.dp, vertical = SpaceXs),
     ) {
         Text(
             text = "$percent%",
@@ -183,13 +191,13 @@ private fun MatchBadge(percent: Int) {
 private fun LeafBadge(count: Int) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(100.dp))
+            .clip(RoundedCornerShape(RoundedFull))
             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
-            .padding(horizontal = 6.dp, vertical = 2.dp),
+            .padding(horizontal = 6.dp, vertical = SpaceXs),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(SpaceXs),
         ) {
             Icon(
                 imageVector = Icons.Outlined.Eco,

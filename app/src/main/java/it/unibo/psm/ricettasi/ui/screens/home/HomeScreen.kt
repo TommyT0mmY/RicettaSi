@@ -53,6 +53,14 @@ import it.unibo.psm.ricettasi.ui.components.RecipeListCard
 import it.unibo.psm.ricettasi.ui.components.displayLabel
 import it.unibo.psm.ricettasi.ui.screens.esplora.EsploraPreset
 import it.unibo.psm.ricettasi.ui.screens.pantry.PantryItemDisplay
+import it.unibo.psm.ricettasi.ui.theme.CardElevation
+import it.unibo.psm.ricettasi.ui.theme.RoundedLg
+import it.unibo.psm.ricettasi.ui.theme.RoundedMd
+import it.unibo.psm.ricettasi.ui.theme.Space2xl
+import it.unibo.psm.ricettasi.ui.theme.SpaceLg
+import it.unibo.psm.ricettasi.ui.theme.SpaceMd
+import it.unibo.psm.ricettasi.ui.theme.SpaceSm
+import it.unibo.psm.ricettasi.ui.theme.SpaceXl
 import it.unibo.psm.ricettasi.ui.theme.customColors
 import org.koin.androidx.compose.koinViewModel
 
@@ -106,8 +114,8 @@ fun HomeScreen(
             HeroSection(
                 timeSlot = state.timeSlot,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 24.dp, bottom = 24.dp),
+                    .padding(horizontal = SpaceXl)
+                    .padding(top = Space2xl, bottom = Space2xl),
             )
         }
 
@@ -115,7 +123,7 @@ fun HomeScreen(
             item {
                 SvuotaIlFrigoCard(
                     onClick = onSvuotaIlFrigoClick,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
             item { Spacer(Modifier.height(28.dp)) }
@@ -124,14 +132,14 @@ fun HomeScreen(
                     title = "In scadenza",
                     icon = Icons.Outlined.Eco,
                     onSeeAll = onSeeAllExpiring,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(SpaceLg)) }
             item {
                 ExpiringItemsRow(
                     items = state.expiringItems,
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = SpaceXl),
                 )
             }
             item { Spacer(Modifier.height(28.dp)) }
@@ -143,10 +151,10 @@ fun HomeScreen(
                     title = "Dalla tua dispensa",
                     icon = Icons.Outlined.Stars,
                     onSeeAll = { onNavigateToEsplora(EsploraPreset()) },
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(SpaceLg)) }
             items(state.suggestions.take(5), key = { "suggestion_${it.recipe.id}" }) { item ->
                 RecipeListCard(
                     item = item,
@@ -154,11 +162,11 @@ fun HomeScreen(
                     onToggleFavorite = onToggleFavorite,
                     onClick = { onRecipeClick(item.recipe.id) },
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 12.dp),
+                        .padding(horizontal = SpaceXl)
+                        .padding(bottom = SpaceLg),
                 )
             }
-            item { Spacer(Modifier.height(16.dp)) }
+            item { Spacer(Modifier.height(SpaceXl)) }
         }
 
         if (state.favorites.isNotEmpty()) {
@@ -167,15 +175,15 @@ fun HomeScreen(
                     title = "Preferite",
                     icon = Icons.Outlined.FavoriteBorder,
                     onSeeAll = onNavigateToFavorites,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(SpaceLg)) }
             item {
                 RecipeScrollRow(
                     recipes = state.favorites,
                     onRecipeClick = onRecipeClick,
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = SpaceXl),
                 )
             }
             item { Spacer(Modifier.height(28.dp)) }
@@ -187,10 +195,10 @@ fun HomeScreen(
                     title = state.timeSlot.sectionTitle,
                     icon = state.timeSlot.sectionIcon,
                     onSeeAll = { onNavigateToEsplora(EsploraPreset(mealType = state.timeSlot.mealType)) },
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(SpaceLg)) }
             items(state.timeBasedRecipes.take(4), key = { "timeslot_${it.recipe.id}" }) { item ->
                 RecipeListCard(
                     item = item,
@@ -198,11 +206,11 @@ fun HomeScreen(
                     onToggleFavorite = onToggleFavorite,
                     onClick = { onRecipeClick(item.recipe.id) },
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 12.dp),
+                        .padding(horizontal = SpaceXl)
+                        .padding(bottom = SpaceLg),
                 )
             }
-            item { Spacer(Modifier.height(16.dp)) }
+            item { Spacer(Modifier.height(SpaceXl)) }
         }
 
         if (state.quickRecipes.isNotEmpty()) {
@@ -211,15 +219,15 @@ fun HomeScreen(
                     title = "Pronte in 15 minuti",
                     icon = Icons.Outlined.Timer,
                     onSeeAll = { onNavigateToEsplora(EsploraPreset(timeWindow = TimeWindow.QUICK)) },
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(SpaceLg)) }
             item {
                 RecipeScrollRow(
                     recipes = state.quickRecipes.take(6).map { it.recipe },
                     onRecipeClick = onRecipeClick,
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = SpaceXl),
                 )
             }
             item { Spacer(Modifier.height(28.dp)) }
@@ -231,10 +239,10 @@ fun HomeScreen(
                     title = "Mettiti alla prova",
                     icon = Icons.Outlined.EmojiEvents,
                     onSeeAll = { onNavigateToEsplora(EsploraPreset(difficulties = setOf(Difficulty.MEDIO, Difficulty.DIFFICILE))) },
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = SpaceXl),
                 )
             }
-            item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(SpaceLg)) }
             items(state.challengeRecipes.take(4), key = { "challenge_${it.recipe.id}" }) { item ->
                 RecipeListCard(
                     item = item,
@@ -242,8 +250,8 @@ fun HomeScreen(
                     onToggleFavorite = onToggleFavorite,
                     onClick = { onRecipeClick(item.recipe.id) },
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 12.dp),
+                        .padding(horizontal = SpaceXl)
+                        .padding(bottom = SpaceLg),
                 )
             }
         }
@@ -285,27 +293,27 @@ private fun SvuotaIlFrigoCard(onClick: () -> Unit, modifier: Modifier = Modifier
                 Text(
                     text = "Svuota il frigo",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(SpaceSm))
                 Text(
                     text = "Ricette con quello che sta per scadere",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.85f),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
                 )
             }
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(SpaceXl))
             Box(
                 modifier = Modifier
                     .size(52.dp)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.2f)),
+                    .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Eco,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(24.dp),
                 )
             }
@@ -330,7 +338,7 @@ private fun SectionHeader(
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(22.dp),
         )
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(SpaceMd))
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
@@ -351,8 +359,8 @@ private fun SectionHeader(
 private fun ExpiringItemsRow(items: List<PantryItemDisplay>, modifier: Modifier = Modifier) {
     LazyRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(end = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(SpaceMd),
+        contentPadding = PaddingValues(end = SpaceXl),
     ) {
         items(items, key = { it.pantryItem.id }) { item ->
             ExpiringItemPill(item = item)
@@ -378,9 +386,9 @@ private fun ExpiringItemPill(item: PantryItemDisplay) {
     Column(
         modifier = Modifier
             .width(150.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(RoundedMd))
             .background(statusColor.copy(alpha = 0.12f))
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .padding(horizontal = 14.dp, vertical = SpaceLg),
     ) {
         Text(
             text = item.ingredientName,
@@ -421,8 +429,8 @@ private fun RecipeScrollRow(
 ) {
     LazyRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(end = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(SpaceLg),
+        contentPadding = PaddingValues(end = SpaceXl),
     ) {
         items(recipes, key = { it.id }) { recipe ->
             RecipeScrollCard(recipe = recipe, onClick = { onRecipeClick(recipe.id) })
@@ -434,9 +442,9 @@ private fun RecipeScrollRow(
 private fun RecipeScrollCard(recipe: RecipeSummary, onClick: () -> Unit) {
     Card(
         modifier = Modifier.width(160.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(RoundedLg),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = CardElevation),
         onClick = onClick,
     ) {
         Column {
@@ -454,7 +462,7 @@ private fun RecipeScrollCard(recipe: RecipeSummary, onClick: () -> Unit) {
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(SpaceSm))
                 val meta = buildList {
                     if (recipe.preparationTime != null) add("${recipe.preparationTime} min")
                     add(recipe.difficulty.displayLabel)

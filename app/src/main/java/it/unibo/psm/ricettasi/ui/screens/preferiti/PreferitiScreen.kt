@@ -28,6 +28,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.unibo.psm.ricettasi.domain.model.RecipeWithAvailability
 import it.unibo.psm.ricettasi.domain.model.toSummary
 import it.unibo.psm.ricettasi.ui.components.RecipeListCard
+import it.unibo.psm.ricettasi.ui.theme.Space2xl
+import it.unibo.psm.ricettasi.ui.theme.SpaceMd
+import it.unibo.psm.ricettasi.ui.theme.SpaceSm
+import it.unibo.psm.ricettasi.ui.theme.SpaceXl
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -63,17 +67,17 @@ private fun PreferitiScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(start = SpaceXl, end = SpaceXl, top = Space2xl, bottom = 32.dp),
+        verticalArrangement = Arrangement.spacedBy(SpaceXl),
     ) {
         item {
-            Column(modifier = Modifier.padding(bottom = 8.dp)) {
+            Column(modifier = Modifier.padding(bottom = SpaceMd)) {
                 Text(
                     text = "Preferiti",
                     style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(SpaceSm))
                 Text(
                     text = if (state.recipes.isEmpty()) "Nessuna ricetta salvata"
                     else if (state.recipes.size == 1) "1 ricetta salvata"
@@ -120,13 +124,13 @@ private fun EmptyFavorites() {
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
             modifier = Modifier.size(64.dp),
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(SpaceXl))
         Text(
             text = "Ancora nessun preferito",
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(SpaceMd))
         Text(
             text = "Salva le ricette che ti piacciono e le ritroverai qui.",
             style = MaterialTheme.typography.bodyMedium,

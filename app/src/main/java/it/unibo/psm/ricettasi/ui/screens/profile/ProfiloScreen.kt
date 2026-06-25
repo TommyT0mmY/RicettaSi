@@ -17,6 +17,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Kitchen
+import androidx.compose.material.icons.outlined.Restaurant
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.WorkspacePremium
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,13 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import it.unibo.psm.ricettasi.R
 import it.unibo.psm.ricettasi.domain.model.xpForLevel
 import it.unibo.psm.ricettasi.ui.components.BadgeIcon
 import it.unibo.psm.ricettasi.ui.theme.CardElevation
@@ -134,7 +140,7 @@ private fun ProfileHeader(onSettingsClick: () -> Unit) {
             color = MaterialTheme.colorScheme.onBackground,
         )
         Icon(
-            painter = painterResource(id = R.drawable.ic_settings),
+            imageVector = Icons.Outlined.Settings,
             contentDescription = "Impostazioni",
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -210,7 +216,7 @@ private fun HeroCard(profile: it.unibo.psm.ricettasi.domain.model.UserProfile) {
 
                 // Trophy icon (right)
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_trophy),
+                    imageVector = Icons.Outlined.EmojiEvents,
                     contentDescription = "Trofei",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(28.dp),
@@ -301,19 +307,19 @@ private fun StatsRow(
         horizontalArrangement = Arrangement.spacedBy(SpaceLg),
     ) {
         StatCard(
-            iconRes = R.drawable.ic_chef_hat,
+            icon = Icons.Outlined.Restaurant,
             count = cookedCount,
             label = "CUCINATE",
             modifier = Modifier.weight(1f),
         )
         StatCard(
-            iconRes = R.drawable.ic_flame_heart,
+            icon = Icons.Outlined.Favorite,
             count = favoriteCount,
             label = "PREFERITI",
             modifier = Modifier.weight(1f),
         )
         StatCard(
-            iconRes = R.drawable.ic_fridge,
+            icon = Icons.Outlined.Kitchen,
             count = pantryCount,
             label = "DISPENSA",
             modifier = Modifier.weight(1f),
@@ -323,7 +329,7 @@ private fun StatsRow(
 
 @Composable
 private fun StatCard(
-    iconRes: Int,
+    icon: ImageVector,
     count: Int,
     label: String,
     modifier: Modifier = Modifier,
@@ -349,7 +355,7 @@ private fun StatCard(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    painter = painterResource(id = iconRes),
+                    imageVector = icon,
                     contentDescription = label,
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                     modifier = Modifier.size(18.dp),
@@ -394,7 +400,7 @@ private fun TrophiesSection(badgeDisplays: List<BadgeDisplay>) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_medal),
+                    imageVector = Icons.Outlined.WorkspacePremium,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(22.dp),

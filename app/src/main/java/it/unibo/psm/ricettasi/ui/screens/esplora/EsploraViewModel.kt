@@ -11,6 +11,7 @@ import it.unibo.psm.ricettasi.domain.model.TimeWindow
 import it.unibo.psm.ricettasi.domain.repository.IngredientRepository
 import it.unibo.psm.ricettasi.domain.repository.PantryRepository
 import it.unibo.psm.ricettasi.domain.repository.RecipeRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,6 +77,7 @@ class EsploraViewModel(
 
     private var searchJob: Job? = null
     private var ingredientSearchJob: Job? = null
+    private var isFirstSearch = true
 
     init {
         viewModelScope.launch {
@@ -264,7 +266,7 @@ class EsploraViewModel(
     private fun runSearch() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            delay(250)
+            if (!isFirstSearch) delay(250) else isFirstSearch = false
             _uiState.update { it.copy(isSearching = true) }
             val state = _uiState.value
             val filters = RecipeFilters(
@@ -274,8 +276,13 @@ class EsploraViewModel(
                 categories = state.selectedCategories,
                 ingredientIds = state.selectedIngredients.map { it.id }.toSet(),
             )
-            val results = runCatching { recipeRepository.searchRecipes(state.query, filters) }
-                .getOrDefault(emptyList())
+            val results = try {
+                recipeRepository.searchRecipes(state.query, filters)
+            } catch (_: CancellationException) {
+                throw CancellationException()
+            } catch (_: Exception) {
+                emptyList()
+            }
             _uiState.update { it.copy(results = results, isSearching = false) }
         }
     }

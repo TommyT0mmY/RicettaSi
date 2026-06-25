@@ -72,14 +72,6 @@ import it.unibo.psm.ricettasi.ui.theme.SpaceXl
 import it.unibo.psm.ricettasi.ui.theme.SpaceXs
 import org.koin.androidx.compose.koinViewModel
 
-// -- Colours used locally --
-
-private val AccentColor = Color(0xFFE65F2B)
-private val AccentDark = Color(0xFFFF8A58)
-private val WarmBlack = Color(0xFF2A2421)
-private val SecondaryGrey = Color(0xFF8C827A)
-private val OverlayCircleBg = Color.White.copy(alpha = 0.85f)
-
 // -- Route --
 
 @Composable
@@ -134,7 +126,7 @@ private fun LoadingContent() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(color = AccentColor)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 
@@ -150,7 +142,7 @@ private fun ErrorContent(message: String, onBack: () -> Unit) {
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
-            color = SecondaryGrey,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(SpaceLg))
         Text(
@@ -158,7 +150,7 @@ private fun ErrorContent(message: String, onBack: () -> Unit) {
             fontFamily = ManropeFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = AccentColor,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable(onClick = onBack),
         )
     }
@@ -313,12 +305,12 @@ private fun HeroSection(
                 modifier = Modifier
                     .size(IconBtn)
                     .clip(CircleShape)
-                    .background(OverlayCircleBg),
+                    .background(Color.White.copy(alpha = 0.85f)),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Indietro",
-                    tint = WarmBlack,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -329,7 +321,7 @@ private fun HeroSection(
                 modifier = Modifier
                     .size(IconBtn)
                     .clip(CircleShape)
-                    .background(OverlayCircleBg),
+                    .background(Color.White.copy(alpha = 0.85f)),
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -396,7 +388,7 @@ private fun MetadataCard(
                     Icon(
                         imageVector = Icons.Outlined.Schedule,
                         contentDescription = "Tempo",
-                        tint = AccentColor,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(IconSm),
                     )
                 },
@@ -410,7 +402,7 @@ private fun MetadataCard(
                     Icon(
                         imageVector = Icons.Outlined.Star,
                         contentDescription = "Difficolta'",
-                        tint = AccentColor,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(IconSm),
                     )
                 },
@@ -432,7 +424,7 @@ private fun MetadataColumn(
             modifier = Modifier
                 .size(36.dp)
                 .clip(CircleShape)
-                .background(AccentColor.copy(alpha = 0.08f)),
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
             contentAlignment = Alignment.Center,
         ) {
             icon()
@@ -450,7 +442,7 @@ private fun MetadataColumn(
             fontFamily = ManropeFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 11.sp,
-            color = SecondaryGrey,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -498,7 +490,7 @@ private fun TabSelector(
                         else Modifier.align(Alignment.CenterEnd)
                     )
                     .clip(RoundedCornerShape(2.dp))
-                    .background(AccentColor),
+                    .background(MaterialTheme.colorScheme.primary),
             )
         }
     }
@@ -516,7 +508,7 @@ private fun TabItem(
         fontFamily = ManropeFamily,
         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
         fontSize = 16.sp,
-        color = if (isSelected) MaterialTheme.colorScheme.onBackground else SecondaryGrey,
+        color = if (isSelected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         modifier = modifier.clickable(onClick = onClick),
     )
@@ -547,7 +539,7 @@ private fun IngredientsTab(
                     fontFamily = ManropeFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
-                    color = SecondaryGrey,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     text = servings,
@@ -568,7 +560,7 @@ private fun IngredientsTab(
                 fontFamily = ManropeFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
-                color = SecondaryGrey,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = SpaceLg),
             )
         } else {
@@ -599,7 +591,7 @@ private fun IngredientsTab(
                             fontFamily = ManropeFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
-                            color = AccentColor,
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
@@ -638,7 +630,7 @@ private fun PreparationTab(
                 fontFamily = ManropeFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
-                color = SecondaryGrey,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = SpaceLg),
             )
         } else {
@@ -647,7 +639,6 @@ private fun PreparationTab(
             }
         }
 
-        // "Cucinato" button — appears after the last step
         Spacer(Modifier.height(SpaceMd))
         Button(
             onClick = onMarkCooked,
@@ -657,8 +648,8 @@ private fun PreparationTab(
                 .height(52.dp),
             shape = RoundedCornerShape(RoundedLg),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isCooked) SecondaryGrey else AccentColor,
-                disabledContainerColor = SecondaryGrey.copy(alpha = 0.3f),
+                containerColor = if (isCooked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
             ),
         ) {
             if (isCooked) {
@@ -701,7 +692,7 @@ private fun StepCard(stepNumber: Int, text: String) {
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .background(AccentColor),
+                    .background(MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -709,7 +700,7 @@ private fun StepCard(stepNumber: Int, text: String) {
                     fontFamily = ManropeFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
 

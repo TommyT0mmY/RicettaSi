@@ -30,6 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import it.unibo.psm.ricettasi.ui.theme.RicettaSiTheme
+import it.unibo.psm.ricettasi.ui.theme.RoundedFull
+import it.unibo.psm.ricettasi.ui.theme.RoundedMd
+import it.unibo.psm.ricettasi.ui.theme.Space2xl
+import it.unibo.psm.ricettasi.ui.theme.SpaceLg
+import it.unibo.psm.ricettasi.ui.theme.SpaceMd
 import org.koin.androidx.compose.koinViewModel
 
 /** Connects [AuthViewModel] to the UI, forwarding sign-in and sign-up events. */
@@ -64,7 +69,7 @@ private fun AuthScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .imePadding()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = Space2xl),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -73,7 +78,7 @@ private fun AuthScreen(
                 style = MaterialTheme.typography.displayMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(SpaceMd))
             Text(
                 text = if (isSignUp) {
                     "Crea il tuo account per iniziare."
@@ -91,7 +96,7 @@ private fun AuthScreen(
                 onValueChange = { email = it },
                 label = { Text("Email") },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(RoundedMd),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next,
@@ -99,14 +104,14 @@ private fun AuthScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(SpaceLg))
 
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(RoundedMd),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -116,7 +121,7 @@ private fun AuthScreen(
             )
 
             if (errorMessage != null) {
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(SpaceLg))
                 Text(
                     text = errorMessage,
                     style = MaterialTheme.typography.bodyMedium,
@@ -124,14 +129,14 @@ private fun AuthScreen(
                 )
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(Space2xl))
 
             Button(
                 onClick = {
                     if (isSignUp) onSignUp(email, password) else onSignIn(email, password)
                 },
                 enabled = !isSubmitting && email.isNotBlank() && password.length >= 6,
-                shape = RoundedCornerShape(100.dp),
+                shape = RoundedCornerShape(RoundedFull),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (isSubmitting) {
@@ -145,7 +150,7 @@ private fun AuthScreen(
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(SpaceMd))
 
             TextButton(
                 onClick = { isSignUp = !isSignUp },

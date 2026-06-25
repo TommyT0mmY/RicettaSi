@@ -218,7 +218,7 @@ private fun PantryScreen(
             FloatingActionButton(
                 onClick = onShowAddSheet,
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = CircleShape,
                 modifier = Modifier.padding(end = SpaceXl, bottom = SpaceMd),
             ) {
@@ -248,7 +248,7 @@ private fun PantryScreen(
 @Composable
 private fun PantryHeader(activeCount: Int) {
     Column(
-        modifier = Modifier.padding(start = SpaceXl, end = SpaceXl, top = SpaceXl, bottom = SpaceMd),
+        modifier = Modifier.padding(start = SpaceXl, end = SpaceXl, top = Space2xl, bottom = SpaceMd),
     ) {
         Text(
             text = "Dispensa",
@@ -298,7 +298,7 @@ private fun EmptyPantry(
             shape = RoundedCornerShape(RoundedFull),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             ),
         ) {
             Text("Aggiungi ingrediente")
@@ -417,7 +417,7 @@ private fun PantryCheckbox(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Spunta come attivo",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(SpaceXl),
             )
         }

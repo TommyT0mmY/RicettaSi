@@ -182,9 +182,9 @@ fun AddIngredientSheet(
                 shape = RoundedCornerShape(RoundedFull),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                    disabledContentColor = Color.White.copy(alpha = 0.7f),
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -194,7 +194,7 @@ fun AddIngredientSheet(
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
                         strokeWidth = 2.dp,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 } else {
                     Text(
