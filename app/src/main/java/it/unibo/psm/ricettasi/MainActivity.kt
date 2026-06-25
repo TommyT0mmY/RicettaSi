@@ -4,44 +4,40 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
+import it.unibo.psm.ricettasi.data.settings.ThemeOption
+import it.unibo.psm.ricettasi.data.settings.ThemeStore
+import it.unibo.psm.ricettasi.data.sync.SyncWorker
+import it.unibo.psm.ricettasi.ui.navigation.RootGate
 import it.unibo.psm.ricettasi.ui.theme.RicettaSiTheme
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        SyncWorker.schedule(this)
         setContent {
-            RicettaSiTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            val themeStore: ThemeStore = koinInject()
+            val theme by themeStore.theme.collectAsStateWithLifecycle(
+                initialValue = ThemeOption.AUTO,
+            )
+            RicettaSiTheme(
+                darkTheme = when (theme) {
+                    ThemeOption.LIGHT -> false
+                    ThemeOption.DARK -> true
+                    ThemeOption.AUTO -> isSystemInDarkTheme()
+                },
+            ) {
+                RootGate()
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RicettaSiTheme {
-        Greeting("Android")
+    override fun onResume() {
+        super.onResume()
+        SyncWorker.triggerNow(this)
     }
 }

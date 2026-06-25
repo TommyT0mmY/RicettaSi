@@ -31,11 +31,14 @@ private val DarkCustomColors = CustomColors(
 
 private val LocalCustomColors = staticCompositionLocalOf { LightCustomColors }
 
+// Extension property to access custom colors from MaterialTheme
+@Suppress("UnusedReceiverParameter")
 val MaterialTheme.customColors: CustomColors
     @Composable get() = LocalCustomColors.current
 
 private val BaseLightColorScheme = lightColorScheme(
     primary = Accent,
+    onPrimary = Color.White,
     background = Background,
     surface = Surface,
     onBackground = TextPrimary,
@@ -47,6 +50,7 @@ private val BaseLightColorScheme = lightColorScheme(
 
 private val BaseDarkColorScheme = darkColorScheme(
     primary = AccentDark,
+    onPrimary = Color.White,
     background = BackgroundDark,
     surface = SurfaceDark,
     onBackground = TextPrimaryDark,
