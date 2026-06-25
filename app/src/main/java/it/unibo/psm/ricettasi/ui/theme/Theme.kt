@@ -38,6 +38,7 @@ val MaterialTheme.customColors: CustomColors
 
 private val BaseLightColorScheme = lightColorScheme(
     primary = Accent,
+    onPrimary = Color.White,
     background = Background,
     surface = Surface,
     onBackground = TextPrimary,
@@ -49,6 +50,7 @@ private val BaseLightColorScheme = lightColorScheme(
 
 private val BaseDarkColorScheme = darkColorScheme(
     primary = AccentDark,
+    onPrimary = Color.White,
     background = BackgroundDark,
     surface = SurfaceDark,
     onBackground = TextPrimaryDark,

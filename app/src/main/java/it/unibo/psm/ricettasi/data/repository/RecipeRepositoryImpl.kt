@@ -95,6 +95,16 @@ class RecipeRepositoryImpl(
         ).map { it.toDomain() }
     }
 
+    override suspend fun getCategoryNames(): List<String> =
+        categoryDao.getAll().map { it.name }.sorted()
+
+    override suspend fun emptyFridgeRecipes(limit: Int): List<RecipeWithAvailability> =
+        recipeRemote.searchRecipes(
+            minExpiring = 1,
+            orderBy = "expiring",
+            limit = limit,
+        ).map { it.toDomain() }
+
     override suspend fun homeSuggestions(
         emptyFridgeLimit: Int,
         suggestionsLimit: Int,

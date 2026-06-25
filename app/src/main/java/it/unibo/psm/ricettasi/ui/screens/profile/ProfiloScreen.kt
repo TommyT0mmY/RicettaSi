@@ -49,11 +49,6 @@ import it.unibo.psm.ricettasi.ui.theme.SpaceXl
 import it.unibo.psm.ricettasi.ui.theme.SpaceXs
 import org.koin.androidx.compose.koinViewModel
 
-// -- Brand accent colours (used across the profile screen) --
-
-private val AccentColor = Color(0xFFE65F2B)
-private val AccentDarkVariant = Color(0xFFFF8A58)
-
 // -- Route --
 
 /** Connects [ProfiloViewModel] to the UI and provides navigation callbacks. */
@@ -129,7 +124,7 @@ private fun ProfileHeader(onSettingsClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = SpaceXl, end = SpaceXl, top = SpaceXl, bottom = SpaceMd),
+            .padding(start = SpaceXl, end = SpaceXl, top = Space2xl, bottom = SpaceMd),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -182,7 +177,7 @@ private fun HeroCard(profile: it.unibo.psm.ricettasi.domain.model.UserProfile) {
                     modifier = Modifier
                         .size(56.dp)
                         .clip(CircleShape)
-                        .background(AccentColor),
+                        .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -190,7 +185,7 @@ private fun HeroCard(profile: it.unibo.psm.ricettasi.domain.model.UserProfile) {
                         fontFamily = ManropeFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
 
@@ -208,9 +203,7 @@ private fun HeroCard(profile: it.unibo.psm.ricettasi.domain.model.UserProfile) {
                     )
                     Text(
                         text = profile.displayName,
-                        fontFamily = FrauncesFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
+                        style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
@@ -219,7 +212,7 @@ private fun HeroCard(profile: it.unibo.psm.ricettasi.domain.model.UserProfile) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_trophy),
                     contentDescription = "Trofei",
-                    tint = AccentDarkVariant,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(28.dp),
                 )
             }
@@ -285,7 +278,7 @@ private fun XpBar(
                     .clip(RoundedCornerShape(RoundedLg))
                     .background(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(AccentColor, AccentDarkVariant),
+                            colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
                         ),
                     ),
             )
@@ -352,13 +345,13 @@ private fun StatCard(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(AccentColor.copy(alpha = 0.08f)),
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     painter = painterResource(id = iconRes),
                     contentDescription = label,
-                    tint = AccentColor.copy(alpha = 0.7f),
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                     modifier = Modifier.size(18.dp),
                 )
             }
@@ -374,10 +367,7 @@ private fun StatCard(
             )
             Text(
                 text = label,
-                fontFamily = ManropeFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 10.sp,
-                letterSpacing = 1.sp,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -484,7 +474,7 @@ private fun TrophiesSection(badgeDisplays: List<BadgeDisplay>) {
 @Composable
 private fun TrophyCard(display: BadgeDisplay) {
     val borderColor = if (display.unlocked) {
-        AccentColor.copy(alpha = 0.15f)
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
     } else {
         Color.Transparent
     }

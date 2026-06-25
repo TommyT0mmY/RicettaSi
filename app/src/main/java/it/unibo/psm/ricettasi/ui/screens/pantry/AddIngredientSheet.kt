@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import it.unibo.psm.ricettasi.domain.model.Ingredient
 import it.unibo.psm.ricettasi.ui.theme.RoundedFull
 import it.unibo.psm.ricettasi.ui.theme.RoundedMd
@@ -258,6 +259,9 @@ private fun IngredientAutocompleteField(
             expanded = showDropdown && dropdownExpanded,
             onDismissRequest = { dropdownExpanded = false },
             shape = RoundedCornerShape(RoundedMd),
+            // focusable = false so opening the suggestions popup doesn't steal focus from the
+            // text field, otherwise the keyboard closes the moment a suggestion shows up.
+            properties = PopupProperties(focusable = false),
         ) {
             suggestions.take(5).forEach { ingredient ->
                 DropdownMenuItem(

@@ -26,9 +26,7 @@ enum class PillStyle {
 }
 
 private val CategoryBg = Color(0xFFFFF0EB)
-private val CategoryText = Color(0xFFE65F2B)
 private val MealTypeBg = Color(0xFFF5F0EB)
-private val MealTypeText = Color(0xFF8C827A)
 
 /**
  * A small rounded tag used to display recipe categories and meal types.
@@ -43,8 +41,8 @@ fun RecipePill(
     modifier: Modifier = Modifier,
 ) {
     val (bgColor, textColor) = when (style) {
-        PillStyle.CATEGORY -> CategoryBg to CategoryText
-        PillStyle.MEAL_TYPE -> MealTypeBg to MealTypeText
+        PillStyle.CATEGORY -> CategoryBg to MaterialTheme.colorScheme.primary
+        PillStyle.MEAL_TYPE -> MealTypeBg to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Box(

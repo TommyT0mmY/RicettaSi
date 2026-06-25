@@ -280,7 +280,7 @@ private fun EmptyPantry(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "La dispensa e' vuota",
+            text = "La dispensa é vuota",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,

@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Eco
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -32,7 +31,6 @@ import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,15 +41,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import it.unibo.psm.ricettasi.domain.model.Difficulty
 import it.unibo.psm.ricettasi.domain.model.ExpiryStatus
 import it.unibo.psm.ricettasi.domain.model.RecipeSummary
-import it.unibo.psm.ricettasi.domain.model.RecipeWithAvailability
+import it.unibo.psm.ricettasi.domain.model.TimeWindow
+import it.unibo.psm.ricettasi.ui.components.RecipeImage
+import it.unibo.psm.ricettasi.ui.components.RecipeListCard
+import it.unibo.psm.ricettasi.ui.components.displayLabel
+import it.unibo.psm.ricettasi.ui.screens.esplora.EsploraPreset
 import it.unibo.psm.ricettasi.ui.screens.pantry.PantryItemDisplay
 import it.unibo.psm.ricettasi.ui.theme.customColors
 import org.koin.androidx.compose.koinViewModel
@@ -65,18 +65,13 @@ private val TimeSlot.sectionIcon: ImageVector
         TimeSlot.NOTTE -> Icons.Outlined.NightsStay
     }
 
-private val Difficulty.displayLabel: String
-    get() = when (this) {
-        Difficulty.FACILE -> "Facile"
-        Difficulty.MEDIO -> "Media"
-        Difficulty.DIFFICILE -> "Difficile"
-    }
-
 @Composable
 fun HomeRoute(
     onNavigateToRecipe: (String) -> Unit = {},
     onNavigateToSvuotaIlFrigo: () -> Unit = {},
     onNavigateToPantry: () -> Unit = {},
+    onNavigateToEsplora: (EsploraPreset) -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {},
 ) {
     val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -86,6 +81,8 @@ fun HomeRoute(
         onSvuotaIlFrigoClick = onNavigateToSvuotaIlFrigo,
         onToggleFavorite = viewModel::toggleFavorite,
         onSeeAllExpiring = onNavigateToPantry,
+        onNavigateToEsplora = onNavigateToEsplora,
+        onNavigateToFavorites = onNavigateToFavorites,
     )
 }
 
@@ -96,6 +93,8 @@ fun HomeScreen(
     onSvuotaIlFrigoClick: () -> Unit,
     onToggleFavorite: (String) -> Unit,
     onSeeAllExpiring: () -> Unit,
+    onNavigateToEsplora: (EsploraPreset) -> Unit,
+    onNavigateToFavorites: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -143,7 +142,7 @@ fun HomeScreen(
                 SectionHeader(
                     title = "Dalla tua dispensa",
                     icon = Icons.Outlined.Stars,
-                    onSeeAll = {},
+                    onSeeAll = { onNavigateToEsplora(EsploraPreset()) },
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -167,7 +166,7 @@ fun HomeScreen(
                 SectionHeader(
                     title = "Preferite",
                     icon = Icons.Outlined.FavoriteBorder,
-                    onSeeAll = {},
+                    onSeeAll = onNavigateToFavorites,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -187,7 +186,7 @@ fun HomeScreen(
                 SectionHeader(
                     title = state.timeSlot.sectionTitle,
                     icon = state.timeSlot.sectionIcon,
-                    onSeeAll = {},
+                    onSeeAll = { onNavigateToEsplora(EsploraPreset(mealType = state.timeSlot.mealType)) },
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -211,7 +210,7 @@ fun HomeScreen(
                 SectionHeader(
                     title = "Pronte in 15 minuti",
                     icon = Icons.Outlined.Timer,
-                    onSeeAll = {},
+                    onSeeAll = { onNavigateToEsplora(EsploraPreset(timeWindow = TimeWindow.QUICK)) },
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -231,7 +230,7 @@ fun HomeScreen(
                 SectionHeader(
                     title = "Mettiti alla prova",
                     icon = Icons.Outlined.EmojiEvents,
-                    onSeeAll = {},
+                    onSeeAll = { onNavigateToEsplora(EsploraPreset(difficulties = setOf(Difficulty.MEDIO, Difficulty.DIFFICILE))) },
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
@@ -415,87 +414,6 @@ private fun ExpiringItemPill(item: PantryItemDisplay) {
 }
 
 @Composable
-private fun RecipeListCard(
-    item: RecipeWithAvailability,
-    isFavorite: Boolean,
-    onToggleFavorite: (String) -> Unit,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val summary = item.recipe
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            RecipeImage(
-                imageUrl = summary.imageUrl,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.Top) {
-                    Text(
-                        text = summary.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    IconButton(
-                        onClick = { onToggleFavorite(summary.id) },
-                        modifier = Modifier.size(32.dp),
-                    ) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = if (isFavorite) "Rimuovi dai preferiti" else "Aggiungi ai preferiti",
-                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(20.dp),
-                        )
-                    }
-                }
-                val meta = buildList {
-                    if (summary.preparationTime != null) add("${summary.preparationTime} min")
-                    add(summary.difficulty.displayLabel)
-                    summary.categories.firstOrNull()?.let { add(it) }
-                }.joinToString(" · ")
-                Text(
-                    text = meta,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(Modifier.height(6.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (item.matchPercent > 0) {
-                        MatchBadge(percent = item.matchPercent)
-                    }
-                    if (item.expiringMatchCount > 0) {
-                        LeafBadge(count = item.expiringMatchCount)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun RecipeScrollRow(
     recipes: List<RecipeSummary>,
     onRecipeClick: (String) -> Unit,
@@ -553,78 +471,3 @@ private fun RecipeScrollCard(recipe: RecipeSummary, onClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun RecipeImage(imageUrl: String?, modifier: Modifier = Modifier) {
-    if (imageUrl != null) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-        )
-    } else {
-        Box(
-            modifier = modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Restaurant,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-    }
-}
-
-@Composable
-private fun MatchBadge(percent: Int) {
-    val bgColor = when {
-        percent >= 80 -> MaterialTheme.customColors.statusOk.copy(alpha = 0.15f)
-        percent >= 50 -> MaterialTheme.customColors.statusWarning.copy(alpha = 0.15f)
-        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)
-    }
-    val fgColor = when {
-        percent >= 80 -> MaterialTheme.customColors.statusOk
-        percent >= 50 -> MaterialTheme.customColors.statusWarning
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(100.dp))
-            .background(bgColor)
-            .padding(horizontal = 6.dp, vertical = 2.dp),
-    ) {
-        Text(
-            text = "$percent%",
-            style = MaterialTheme.typography.labelSmall,
-            color = fgColor,
-        )
-    }
-}
-
-@Composable
-private fun LeafBadge(count: Int) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(100.dp))
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
-            .padding(horizontal = 6.dp, vertical = 2.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Eco,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(10.dp),
-            )
-            Text(
-                text = "$count",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
-    }
-}

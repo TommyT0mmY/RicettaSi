@@ -72,24 +72,6 @@ import it.unibo.psm.ricettasi.ui.theme.SpaceXl
 import it.unibo.psm.ricettasi.ui.theme.SpaceXs
 import org.koin.androidx.compose.koinViewModel
 
-/**
- * Scale a quantity string by a multiplier.
- *
- * Extracts a leading integer from strings like "160g" or "2 cucchiai" and
- * multiplies it. Strings without a leading integer (e.g. "q.b.") are
- * returned as-is.
- */
-internal fun scaleQuantity(quantity: String, multiplier: Int): String {
-    if (multiplier == 1) return quantity
-    val match = Regex("^(\\d+)(.*)").find(quantity.trim())
-    if (match != null) {
-        val number = match.groupValues[1].toInt()
-        val suffix = match.groupValues[2]
-        return "${number * multiplier}$suffix"
-    }
-    return quantity
-}
-
 // -- Colours used locally --
 
 private val AccentColor = Color(0xFFE65F2B)
@@ -261,6 +243,7 @@ private fun RecipeContent(
                 0 -> IngredientsTab(
                     ingredients = recipe.ingredients,
                     ingredientNames = state.ingredientNames,
+                    servings = recipe.servings,
                 )
                 1 -> PreparationTab(
                     steps = recipe.steps,
@@ -545,79 +528,38 @@ private fun TabItem(
 private fun IngredientsTab(
     ingredients: List<RecipeIngredient>,
     ingredientNames: Map<String, String>,
+    servings: String?,
 ) {
-    var servings by remember { mutableIntStateOf(2) }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = SpaceXl),
     ) {
-        // Serving stepper
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Ingredienti per",
-                fontFamily = ManropeFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                color = SecondaryGrey,
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Minus
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                        .clickable { if (servings > 1) servings-- },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "-",
-                        fontFamily = ManropeFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-
-                Spacer(Modifier.width(SpaceLg))
-
+        // Servings as written by the recipe (e.g. "4 persone", "20-25 biscotti")
+        if (servings != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
-                    text = "$servings",
+                    text = "Ingredienti per",
+                    fontFamily = ManropeFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = SecondaryGrey,
+                )
+                Text(
+                    text = servings,
                     fontFamily = ManropeFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-
-                Spacer(Modifier.width(SpaceLg))
-
-                // Plus
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                        .clickable { servings++ },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "+",
-                        fontFamily = ManropeFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
             }
-        }
 
-        Spacer(Modifier.height(Space2xl))
+            Spacer(Modifier.height(Space2xl))
+        }
 
         // Ingredient rows
         if (ingredients.isEmpty()) {
@@ -634,7 +576,7 @@ private fun IngredientsTab(
                 val name = ingredient.name
                     ?: ingredientNames[ingredient.ingredientId]
                     ?: ingredient.ingredientId
-                val quantity = ingredient.quantity?.let { scaleQuantity(it, servings) }
+                val quantity = ingredient.quantity
 
                 Row(
                     modifier = Modifier

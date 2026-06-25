@@ -16,10 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import it.unibo.psm.ricettasi.R
 import it.unibo.psm.ricettasi.data.settings.ThemeOption
 import it.unibo.psm.ricettasi.ui.theme.FrauncesFamily
+import it.unibo.psm.ricettasi.ui.theme.IconBtn
 import it.unibo.psm.ricettasi.ui.theme.ManropeFamily
 import it.unibo.psm.ricettasi.ui.theme.RoundedLg
 import it.unibo.psm.ricettasi.ui.theme.Space2xl
@@ -44,9 +48,6 @@ import it.unibo.psm.ricettasi.ui.theme.SpaceMd
 import it.unibo.psm.ricettasi.ui.theme.SpaceXl
 import it.unibo.psm.ricettasi.ui.theme.SpaceXs
 import org.koin.compose.koinInject
-
-private val AccentColor = Color(0xFFE65F2B)
-private val ErrorBg = Color(0xFFFFF0EB)
 
 // -- Route --
 
@@ -113,7 +114,7 @@ private fun SettingsHeader(onBack: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = SpaceXl, end = SpaceXl, top = SpaceXl, bottom = SpaceMd),
+            .padding(start = SpaceXl, end = SpaceXl, top = Space2xl, bottom = SpaceMd),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -122,14 +123,17 @@ private fun SettingsHeader(onBack: () -> Unit) {
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.onBackground,
         )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_chevron_left),
-            contentDescription = "Indietro",
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable(onClick = onBack),
-        )
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier.size(IconBtn),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Indietro",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(24.dp),
+            )
+        }
     }
 }
 
@@ -207,12 +211,12 @@ private fun ThemeRow(
     ) {
         // Leading icon circle
         val (iconRes, circleBg) = when (option) {
-            ThemeOption.LIGHT -> R.drawable.ic_sun to AccentColor
+            ThemeOption.LIGHT -> R.drawable.ic_sun to MaterialTheme.colorScheme.primary
             ThemeOption.DARK -> R.drawable.ic_moon to Color(0xFFF0F0F0)
             ThemeOption.AUTO -> R.drawable.ic_monitor to Color(0xFFF0F0F0)
         }
         val iconTint = when (option) {
-            ThemeOption.LIGHT -> Color.White
+            ThemeOption.LIGHT -> MaterialTheme.colorScheme.onPrimary
             else -> MaterialTheme.colorScheme.onSurface
         }
 
@@ -244,9 +248,7 @@ private fun ThemeRow(
             )
             Text(
                 text = option.description,
-                fontFamily = ManropeFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -267,7 +269,7 @@ private fun RadioButton(active: Boolean) {
             .clip(CircleShape)
             .then(
                 if (active) {
-                    Modifier.background(AccentColor)
+                    Modifier.background(MaterialTheme.colorScheme.primary)
                 } else {
                     Modifier
                         .background(Color.Transparent)
@@ -283,7 +285,7 @@ private fun RadioButton(active: Boolean) {
                 modifier = Modifier
                     .size(10.dp)
                     .clip(CircleShape)
-                    .background(Color.White),
+                    .background(MaterialTheme.colorScheme.onPrimary),
             )
         }
     }
@@ -313,13 +315,13 @@ private fun LogoutBlock(onClick: () -> Unit) {
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(ErrorBg),
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_logout),
                     contentDescription = "Esci",
-                    tint = AccentColor,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp),
                 )
             }
@@ -331,7 +333,7 @@ private fun LogoutBlock(onClick: () -> Unit) {
                 fontFamily = ManropeFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
-                color = AccentColor,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
     }

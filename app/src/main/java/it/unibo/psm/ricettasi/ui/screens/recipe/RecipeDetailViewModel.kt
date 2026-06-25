@@ -1,7 +1,5 @@
 package it.unibo.psm.ricettasi.ui.screens.recipe
 
-import android.content.Context
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import it.unibo.psm.ricettasi.domain.model.Recipe
@@ -100,16 +98,5 @@ class RecipeDetailViewModel(
             recipeRepository.recordCooked(id)
             _uiState.update { it.copy(isCooked = true) }
         }
-    }
-
-    /** Shares the recipe title and a short message via the system share sheet. */
-    fun share(context: Context) {
-        val recipe = _uiState.value.recipe ?: return
-        val text = "Guarda questa ricetta: ${recipe.title}"
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, text)
-        }
-        context.startActivity(Intent.createChooser(intent, "Condividi ricetta"))
     }
 }

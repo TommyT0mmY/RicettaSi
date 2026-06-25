@@ -35,6 +35,15 @@ interface RecipeRepository {
     /** Searches remote recipes with optional filters. Pantry matching is done server-side. */
     suspend fun searchRecipes(query: String, filters: RecipeFilters = RecipeFilters()): List<RecipeWithAvailability>
 
+    /** All category names from the local cache, used to build the Esplora filter chips. */
+    suspend fun getCategoryNames(): List<String>
+
+    /**
+     * Recipes for the "Svuota il frigo" page: only those that use at least one expiring pantry
+     * ingredient, ranked by how urgent those ingredients are (order_by = expiring).
+     */
+    suspend fun emptyFridgeRecipes(limit: Int = 30): List<RecipeWithAvailability>
+
     /**
      * Both Home lists ("Svuota il frigo" + "Per te") from two remote reads.
      * Returns (emptyFridge, suggestions).
