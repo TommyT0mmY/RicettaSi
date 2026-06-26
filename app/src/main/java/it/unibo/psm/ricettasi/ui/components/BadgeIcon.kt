@@ -1,30 +1,19 @@
 package it.unibo.psm.ricettasi.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material.icons.outlined.Bolt
-import androidx.compose.material.icons.outlined.CollectionsBookmark
-import androidx.compose.material.icons.outlined.Eco
-import androidx.compose.material.icons.outlined.EmojiEvents
-import androidx.compose.material.icons.outlined.FreeBreakfast
-import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.NightsStay
-import androidx.compose.material.icons.outlined.Restaurant
-import androidx.compose.material.icons.outlined.School
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.TravelExplore
-import androidx.compose.material.icons.outlined.WorkspacePremium
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -34,25 +23,25 @@ import it.unibo.psm.ricettasi.ui.theme.SpaceMd
 import it.unibo.psm.ricettasi.ui.theme.SpaceSm
 
 /**
- * Resolves a badge [code] to its Material icon.
+ * Resolves a badge [code] to its bundled vector drawable resource ID.
  *
- * The mapping uses the extended Material Icons set, so every icon is
- * available without custom bundled drawables.
+ * Each badge has its own custom icon under `res/drawable/badge_<code>.xml`.
+ * If the code does not match any known drawable a generic fallback is used.
  */
-internal fun badgeIcon(code: String): ImageVector = when (code) {
-    "primo-piatto"       -> Icons.Outlined.Restaurant
-    "cuoco-abituale"     -> Icons.Outlined.Star
-    "repertorio-vario"   -> Icons.Outlined.AutoAwesome
-    "esploratore"        -> Icons.Outlined.TravelExplore
-    "dispensa-piena"     -> Icons.Outlined.Inventory2
-    "collezionista"      -> Icons.Outlined.CollectionsBookmark
-    "esperto"            -> Icons.Outlined.WorkspacePremium
-    "maestro"            -> Icons.Outlined.School
-    "salva-cibo"         -> Icons.Outlined.Eco
-    "gufo-fornelli"      -> Icons.Outlined.NightsStay
-    "cucina-lampo"       -> Icons.Outlined.Bolt
-    "colazione-campioni" -> Icons.Outlined.FreeBreakfast
-    else                 -> Icons.Outlined.EmojiEvents
+private fun badgeDrawableRes(code: String): Int = when (code) {
+    "primo-piatto"       -> it.unibo.psm.ricettasi.R.drawable.badge_primo_piatto
+    "cuoco-abituale"     -> it.unibo.psm.ricettasi.R.drawable.badge_cuoco_abituale
+    "repertorio-vario"   -> it.unibo.psm.ricettasi.R.drawable.badge_repertorio_vario
+    "esploratore"        -> it.unibo.psm.ricettasi.R.drawable.badge_esploratore
+    "dispensa-piena"     -> it.unibo.psm.ricettasi.R.drawable.badge_dispensa_piena
+    "collezionista"      -> it.unibo.psm.ricettasi.R.drawable.badge_collezionista
+    "esperto"            -> it.unibo.psm.ricettasi.R.drawable.badge_esperto
+    "maestro"            -> it.unibo.psm.ricettasi.R.drawable.badge_maestro
+    "salva-cibo"         -> it.unibo.psm.ricettasi.R.drawable.badge_salva_cibo
+    "gufo-fornelli"      -> it.unibo.psm.ricettasi.R.drawable.badge_gufo_fornelli
+    "cucina-lampo"       -> it.unibo.psm.ricettasi.R.drawable.badge_cucina_lampo
+    "colazione-campioni" -> it.unibo.psm.ricettasi.R.drawable.badge_colazione_campioni
+    else                 -> it.unibo.psm.ricettasi.R.drawable.badge_fallback
 }
 
 /** A single badge icon, sized for grids and lists. */
@@ -63,11 +52,15 @@ fun BadgeIcon(
     modifier: Modifier = Modifier,
     size: Dp = 64.dp,
 ) {
-    Icon(
-        imageVector = badgeIcon(badge.code),
+    val grayscaleMatrix = remember {
+        ColorMatrix().apply { setToSaturation(0f) }
+    }
+
+    Image(
+        painter = painterResource(id = badgeDrawableRes(badge.code)),
         contentDescription = badge.name,
-        tint = if (unlocked) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
+        colorFilter = if (unlocked) null else ColorFilter.colorMatrix(grayscaleMatrix),
+        alpha = if (unlocked) 1f else 0.45f,
         modifier = modifier.size(size),
     )
 }
