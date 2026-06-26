@@ -299,18 +299,21 @@ private fun HeroSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val buttonBg = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+            val buttonIcon = MaterialTheme.colorScheme.onSurface
+
             // Back button
             IconButton(
                 onClick = onBack,
                 modifier = Modifier
                     .size(IconBtn)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.85f)),
+                    .background(buttonBg),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Indietro",
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = buttonIcon,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -321,7 +324,7 @@ private fun HeroSection(
                 modifier = Modifier
                     .size(IconBtn)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.85f)),
+                    .background(buttonBg),
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
