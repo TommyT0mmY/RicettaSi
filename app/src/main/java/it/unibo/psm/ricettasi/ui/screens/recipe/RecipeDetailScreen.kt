@@ -1,6 +1,7 @@
  package it.unibo.psm.ricettasi.ui.screens.recipe
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +60,7 @@ import it.unibo.psm.ricettasi.domain.model.RecipeIngredient
 import it.unibo.psm.ricettasi.ui.components.PillStyle
 import it.unibo.psm.ricettasi.ui.components.RecipePill
 import it.unibo.psm.ricettasi.ui.theme.CardElevation
+import it.unibo.psm.ricettasi.ui.theme.customColors
 import it.unibo.psm.ricettasi.ui.theme.FrauncesFamily
 import it.unibo.psm.ricettasi.ui.theme.IconBtn
 import it.unibo.psm.ricettasi.ui.theme.IconSm
@@ -235,6 +237,7 @@ private fun RecipeContent(
                 0 -> IngredientsTab(
                     ingredients = recipe.ingredients,
                     ingredientNames = state.ingredientNames,
+                    availableIds = state.availableIngredientIds,
                     servings = recipe.servings,
                 )
                 1 -> PreparationTab(
@@ -523,6 +526,7 @@ private fun TabItem(
 private fun IngredientsTab(
     ingredients: List<RecipeIngredient>,
     ingredientNames: Map<String, String>,
+    availableIds: Set<String>,
     servings: String?,
 ) {
     Column(
@@ -580,6 +584,18 @@ private fun IngredientsTab(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    // Green dot when the ingredient is in the pantry, empty circle otherwise.
+                    val inPantry = ingredient.ingredientId in availableIds
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .then(
+                                if (inPantry) Modifier.background(MaterialTheme.customColors.statusOk)
+                                else Modifier.border(1.dp, MaterialTheme.colorScheme.outline, CircleShape),
+                            ),
+                    )
+                    Spacer(Modifier.width(SpaceMd))
                     Text(
                         text = name,
                         fontFamily = ManropeFamily,

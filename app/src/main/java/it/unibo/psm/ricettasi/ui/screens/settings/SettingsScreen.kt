@@ -18,9 +18,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DesktopWindows
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -211,11 +211,10 @@ private fun ThemeRow(
             .padding(horizontal = SpaceXl, vertical = SpaceLg),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Leading icon circle
         val (iconVector, circleBg) = when (option) {
             ThemeOption.LIGHT -> Icons.Outlined.WbSunny to MaterialTheme.colorScheme.primary
-            ThemeOption.DARK -> Icons.Outlined.DarkMode to Color(0xFFF0F0F0)
-            ThemeOption.AUTO -> Icons.Outlined.DesktopWindows to Color(0xFFF0F0F0)
+            ThemeOption.DARK -> Icons.Outlined.DarkMode to MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+            ThemeOption.AUTO -> Icons.Outlined.DesktopWindows to MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
         }
         val iconTint = when (option) {
             ThemeOption.LIGHT -> MaterialTheme.colorScheme.onPrimary
@@ -321,7 +320,7 @@ private fun LogoutBlock(onClick: () -> Unit) {
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Logout,
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
                     contentDescription = "Esci",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp),

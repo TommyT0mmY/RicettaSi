@@ -32,6 +32,9 @@ interface RecipeRepository {
      */
     suspend fun computeAvailability(recipeId: String): Pair<Int, Int>
 
+    /** The ids of the recipe's ingredients that are currently in the pantry (matched on root ids). */
+    suspend fun availableIngredientIds(recipeId: String): Set<String>
+
     /** Searches remote recipes with optional filters. Pantry matching is done server-side. */
     suspend fun searchRecipes(query: String, filters: RecipeFilters = RecipeFilters()): List<RecipeWithAvailability>
 

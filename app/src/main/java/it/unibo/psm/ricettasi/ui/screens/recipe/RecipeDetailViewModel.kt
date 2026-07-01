@@ -18,6 +18,8 @@ data class RecipeDetailUiState(
     val isCooked: Boolean = false,
     /** Maps ingredientId -> display name, resolved from the ingredient table. */
     val ingredientNames: Map<String, String> = emptyMap(),
+    /** Recipe ingredient ids that the user currently has in the pantry. */
+    val availableIngredientIds: Set<String> = emptySet(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
 )
@@ -72,6 +74,7 @@ class RecipeDetailViewModel(
                 it.copy(
                     recipe = recipe,
                     ingredientNames = names,
+                    availableIngredientIds = recipeRepository.availableIngredientIds(recipeId),
                     isLoading = false,
                 )
             }

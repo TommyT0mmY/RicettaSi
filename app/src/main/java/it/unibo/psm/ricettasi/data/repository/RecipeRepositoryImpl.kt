@@ -76,6 +76,15 @@ class RecipeRepositoryImpl(
         return requiredRoots.count { it in pantryRoots } to requiredRoots.size
     }
 
+    override suspend fun availableIngredientIds(recipeId: String): Set<String> {
+        val byId = ingredientDao.getAll().associateBy { it.id }
+        val pantryRoots = pantryDao.getActive().map { resolveRoot(it.ingredientId, byId) }.toSet()
+        return recipeDao.getIngredients(recipeId)
+            .map { it.ingredientId }
+            .filter { resolveRoot(it, byId) in pantryRoots }
+            .toSet()
+    }
+
     // ---------- search & suggestions (via RPC search_recipes) ----------
 
     override suspend fun searchRecipes(query: String, filters: RecipeFilters): List<RecipeWithAvailability> {
