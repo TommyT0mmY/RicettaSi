@@ -103,7 +103,15 @@ class HomeViewModel(
         observeExpiring()
         observeFavorites()
         observeFavoriteIds()
-        loadRemoteData()
+        reloadOnPantryChange()
+    }
+
+    private fun reloadOnPantryChange() {
+        viewModelScope.launch {
+            pantryRepository.observeActive().collect {
+                loadRemoteData()
+            }
+        }
     }
 
     private fun observeExpiring() {

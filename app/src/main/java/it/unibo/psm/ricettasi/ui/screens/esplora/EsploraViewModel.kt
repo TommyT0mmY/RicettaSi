@@ -13,7 +13,6 @@ import it.unibo.psm.ricettasi.domain.repository.PantryRepository
 import it.unibo.psm.ricettasi.domain.repository.RecipeRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -77,7 +76,6 @@ class EsploraViewModel(
 
     private var searchJob: Job? = null
     private var ingredientSearchJob: Job? = null
-    private var isFirstSearch = true
 
     init {
         viewModelScope.launch {
@@ -108,7 +106,15 @@ class EsploraViewModel(
                 }
             }
         }
-        runSearch()
+        reloadOnPantryChange()
+    }
+
+    private fun reloadOnPantryChange() {
+        viewModelScope.launch {
+            pantryRepository.observeActive().collect {
+                runSearch()
+            }
+        }
     }
 
     /** Applies a set of filters coming from a Home "Vedi tutto" and lands on the results list. */
@@ -266,7 +272,6 @@ class EsploraViewModel(
     private fun runSearch() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            if (!isFirstSearch) delay(250) else isFirstSearch = false
             _uiState.update { it.copy(isSearching = true) }
             val state = _uiState.value
             val filters = RecipeFilters(

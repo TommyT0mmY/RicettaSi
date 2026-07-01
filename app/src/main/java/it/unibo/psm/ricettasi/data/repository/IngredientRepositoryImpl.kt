@@ -22,23 +22,13 @@ class IngredientRepositoryImpl(
     override fun observeAll(): Flow<List<Ingredient>> =
         ingredientDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun search(query: String, limit: Int): List<Ingredient> {
-        if (query.isBlank()) return emptyList()
-        // FTS4 prefix search: keep only letters/digits so the user's input can't break the
-        // MATCH syntax, then append * to each token. The * has to sit on a bare token ("pomo*"),
-        // wrapping it in quotes ("pomo"*) turned the prefix off, so before it only matched a
-        // fully typed word. With this, typing "p" already starts suggesting.
-        val tokens = query.lowercase()
-            .replace(Regex("[^\\p{L}\\p{N}]+"), " ")
-            .trim()
-            .split(" ")
-            .filter { it.isNotBlank() }
-        if (tokens.isEmpty()) return emptyList()
-        val ftsQuery = tokens.joinToString(" ") { "$it*" }
-        return ingredientDao.search(ftsQuery, limit).map { it.toDomain() }
-    }
+    override suspend fun search(query: String, limit: Int): List<Ingredient> =
+        ingredientDao.search(query, limit).map { it.toDomain() }
 
     override suspend fun getById(id: String): Ingredient? = ingredientDao.getById(id)?.toDomain()
+
+    override suspend fun findByName(name: String): Ingredient? =
+        ingredientDao.findByName(name.trim())?.toDomain()
 
     override suspend fun createPersonal(name: String): Ingredient {
         // The id is generated client-side: the ingredients uuid PK accepts a caller-provided value,

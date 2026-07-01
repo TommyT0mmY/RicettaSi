@@ -39,7 +39,15 @@ class SvuotaIlFrigoViewModel(
     init {
         observeExpiringNames()
         observeFavoriteIds()
-        loadRecipes()
+        reloadOnPantryChange()
+    }
+
+    private fun reloadOnPantryChange() {
+        viewModelScope.launch {
+            pantryRepository.observeActive().collect {
+                loadRecipes()
+            }
+        }
     }
 
     private fun observeExpiringNames() {

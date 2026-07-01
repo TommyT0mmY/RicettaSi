@@ -174,8 +174,10 @@ class PantryViewModel(
         viewModelScope.launch {
             _addSheet.update { it.copy(isSubmitting = true, errorMessage = null) }
             try {
+                val name = state.nameQuery.trim()
                 val ingredient = state.selectedIngredient
-                    ?: ingredientRepository.createPersonal(state.nameQuery.trim())
+                    ?: ingredientRepository.findByName(name)
+                    ?: ingredientRepository.createPersonal(name)
 
                 val item = PantryItem(
                     id = UUID.randomUUID().toString(),
