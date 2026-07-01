@@ -161,6 +161,7 @@ private fun MainContent(
             "Tipo di pasto" to (if (state.mealType != null) 1 else 0),
             "Categorie" to state.selectedCategories.size,
             "Tempo" to state.timeWindows.size,
+            "Difficolta" to state.difficulties.size,
         )
         LazyRow(
             contentPadding = PaddingValues(horizontal = SpaceXl),
