@@ -214,6 +214,20 @@ private fun RecipeContent(
                 modifier = Modifier.padding(horizontal = SpaceXl),
             )
 
+            // Short description under the title
+            if (!recipe.description.isNullOrBlank()) {
+                Spacer(Modifier.height(SpaceMd))
+                Text(
+                    text = recipe.description,
+                    fontFamily = ManropeFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    lineHeight = 21.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = SpaceXl),
+                )
+            }
+
             Spacer(Modifier.height(SpaceLg))
 
             // 4. Metadata card
